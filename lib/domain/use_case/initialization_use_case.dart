@@ -18,15 +18,5 @@ class InitializationUseCase {
     } catch (e, stack) {
       return AppRoutes.login;
     }
-    // print('DEBUG: Initialization check. Token found: ${token != null}');
-    // if (token != null && token.isNotEmpty) {
-    //   return AppRoutes.home;
-    // }
-
-    // if (!hasCompletedOnboarding) {
-    //   return AppRoutes.onboarding;
-    // }
-
-    // return AppRoutes.login;
   }
 }
