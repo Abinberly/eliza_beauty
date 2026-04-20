@@ -19,5 +19,5 @@ abstract class AuthApiService extends ChopperService {
   );
 
   @GET(path: ApiEndpoints.currentUser)
-  Future<Response> getCurrentUser();
+  Future<Response<Map<String, dynamic>>> getCurrentUser();
 }

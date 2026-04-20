@@ -10,26 +10,16 @@ class MainLayoutScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
-        children: [
-          
-          navigationShell,
+      body: navigationShell,
 
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: 0,
-            child: CustomNavBar(
-              currentIndex: navigationShell.currentIndex,
-              onTap: (index) {
-                navigationShell.goBranch(
-                  index,
-                  initialLocation: index == navigationShell.currentIndex,
-                );
-              },
-            ),
-          ),
-        ],
+      bottomNavigationBar: CustomNavBar(
+        currentIndex: navigationShell.currentIndex,
+        onTap: (index) {
+          navigationShell.goBranch(
+            index,
+            initialLocation: index == navigationShell.currentIndex,
+          );
+        },
       ),
       extendBody: true,
     );

@@ -1,5 +1,5 @@
 import 'package:chopper/chopper.dart';
-import 'package:eliza_beauty/core/local/secure_storage_helper.dart';
+import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
 import 'package:eliza_beauty/core/constants/api_endpoints.dart';
 import 'package:eliza_beauty/data/sources/auth_api_service.dart';
 import 'package:eliza_beauty/data/sources/cart_api_service.dart';
@@ -88,14 +88,12 @@ class MyAuthenticator extends Authenticator {
       final refreshClient = ref.read(refreshChopperClientProvider);
       final authService = refreshClient.getService<AuthApiService>();
 
-      print('DEBUG: 401 Detected. Attempting token refresh...');
       final refreshResponse = await authService.refreshToken({
         'refreshToken': refreshToken,
         'expiresInMins': 30,
       });
 
       if (refreshResponse.isSuccessful && refreshResponse.body != null) {
-        print('DEBUG: Token Refresh Successful! Saving to storage...');
         final data = refreshResponse.body!;
         final newAccess = data['accessToken'] as String;
         final newRefresh = data['refreshToken'] as String;
@@ -107,7 +105,7 @@ class MyAuthenticator extends Authenticator {
 
         return applyHeader(request, 'Authorization', 'Bearer $newAccess');
       } else {
-        print('DEBUG: Token Refresh Failed: ${refreshResponse.error}');
+
       }
     } catch (e) {
       await storage.deleteTokens();

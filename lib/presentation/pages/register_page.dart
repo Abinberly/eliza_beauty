@@ -1,4 +1,4 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/atoms/auth_navigation_link.dart';
 import 'package:eliza_beauty/presentation/molecules/auth_header_molecule.dart';
 import 'package:eliza_beauty/presentation/molecules/register_form_molecule.dart';
@@ -12,20 +12,21 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // Assuming you have a registerControllerProvider similar to login
     // final registerState = ref.watch(registerControllerProvider);
+
+    final l10n = context.l10n;
 
     return Stack(
       children: [
         AuthLayoutTemplate(
-          header: const AuthHeaderMolecule(
-            title: AppConstants.createAcc,
-            subtitle: AppConstants.registerDesc,
+          header: AuthHeaderMolecule(
+            title: l10n.createAcc,
+            subtitle: l10n.registerDesc,
           ),
           form: const RegisterFormMolecule(),
           footer: AuthNavigationLink(
-            label: AppConstants.alreadyDesc,
-            actionText: AppConstants.signIn,
+            label: l10n.alreadyDesc,
+            actionText: l10n.signIn,
             onActionPressed: () => context.pop(),
           ),
         ),

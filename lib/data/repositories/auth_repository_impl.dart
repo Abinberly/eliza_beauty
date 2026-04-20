@@ -1,8 +1,9 @@
+import 'dart:convert';
 import 'package:eliza_beauty/data/models/user_model.dart';
 import 'package:eliza_beauty/domain/entities/user.dart';
 import 'package:eliza_beauty/domain/repository/auth_repository.dart';
 import 'package:eliza_beauty/data/sources/auth_api_service.dart';
-import 'package:eliza_beauty/presentation/providers/api_providers.dart';
+import 'package:eliza_beauty/presentation/providers/app/api_providers.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -23,10 +24,45 @@ class AuthRepositoryImpl implements AuthRepository {
     if (!response.isSuccessful) {
       final errorBody = response.error;
 
-      if (errorBody is Map<String, dynamic> &&
-          errorBody.containsKey("message")) {
-        throw Exception(errorBody['message'] ?? "Authentication Failed");
+      String? errorMessage;
+      
+      if (errorBody is String) {
+        try {
+          final decoded = jsonDecode(errorBody);
+          if (decoded is Map<String, dynamic> && decoded.containsKey('message')) {
+            errorMessage = decoded['message'];
+          }
+        } catch (_) {}
+      } else if (errorBody is Map<String, dynamic> && errorBody.containsKey('message')) {
+        errorMessage = errorBody['message'];
       }
+
+      throw Exception(errorMessage ?? "Authentication Failed");
+    }
+
+    return UserModel.fromJson(response.body!);
+  }
+
+  @override
+  Future<User> fetchCurrentUser() async {
+    final response = await _apiService.getCurrentUser();
+
+    if (!response.isSuccessful) {
+      final errorBody = response.error;
+      String? errorMessage;
+      
+      if (errorBody is String) {
+        try {
+          final decoded = jsonDecode(errorBody);
+          if (decoded is Map<String, dynamic> && decoded.containsKey('message')) {
+            errorMessage = decoded['message'];
+          }
+        } catch (_) {}
+      } else if (errorBody is Map<String, dynamic> && errorBody.containsKey('message')) {
+        errorMessage = errorBody['message'];
+      }
+
+      throw Exception(errorMessage ?? "Failed to fetch user profile");
     }
 
     return UserModel.fromJson(response.body!);

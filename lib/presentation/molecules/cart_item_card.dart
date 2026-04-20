@@ -1,3 +1,4 @@
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/domain/entities/cart_item.dart';
 import 'package:flutter/material.dart';
 
@@ -122,7 +123,7 @@ class CartItemCard extends StatelessWidget {
                         size: 20,
                       ),
                       label: Text(
-                        "REMOVE",
+                        context.l10n.remove,
                         style: theme.textTheme.labelLarge?.copyWith(
                           color: colorScheme.error,
                           fontWeight: FontWeight.bold,

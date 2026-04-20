@@ -1,3 +1,4 @@
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 
 class SearchBarField extends StatelessWidget {
@@ -16,7 +17,7 @@ class SearchBarField extends StatelessWidget {
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(
-        hintText: 'Search products...',
+        hintText: context.l10n.searchProductsHint,
         prefixIcon: const Icon(Icons.search),
         suffixIcon: IconButton(
           icon: const Icon(Icons.clear),

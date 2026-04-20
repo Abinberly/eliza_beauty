@@ -1,10 +1,10 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/atoms/app_overlay_loader.dart';
 import 'package:eliza_beauty/presentation/atoms/auth_navigation_link.dart';
 import 'package:eliza_beauty/presentation/molecules/login_form_molecule.dart';
 import 'package:eliza_beauty/presentation/molecules/auth_header_molecule.dart';
-import 'package:eliza_beauty/presentation/providers/login_controller.dart';
+import 'package:eliza_beauty/presentation/providers/auth/login_controller.dart';
 import 'package:eliza_beauty/presentation/templates/auth_layout_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -16,6 +16,7 @@ class LoginPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final loginState = ref.watch(loginControllerProvider);
+    final l10n = context.l10n;
 
     ref.listen<AsyncValue<bool?>>(loginControllerProvider, (previous, next) {
       next.whenOrNull(
@@ -36,13 +37,13 @@ class LoginPage extends ConsumerWidget {
       children: [
         AuthLayoutTemplate(
           header: AuthHeaderMolecule(
-            title: AppConstants.welcome,
-            subtitle: AppConstants.signInDesc,
+            title: l10n.welcome,
+            subtitle: l10n.signInDesc,
           ),
           form: LoginFormMolecule(),
           footer: AuthNavigationLink(
-            label: AppConstants.accQuery,
-            actionText: AppConstants.createAcc,
+            label: l10n.accQuery,
+            actionText: l10n.createAcc,
             onActionPressed: () => context.push(AppRoutes.register),
           ),
         ),

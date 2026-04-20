@@ -8,6 +8,16 @@ class User {
   final String image;
   final String accessToken;
   final String refreshToken;
+  final int? age;
+  final String? phone;
+  final String? birthDate;
+  final String? bloodGroup;
+  final double? height;
+  final double? weight;
+  final String? role;
+  final String? companyTitle;
+  final String? companyDept;
+  final String? addressText;
 
   const User({
     required this.id,
@@ -19,5 +29,15 @@ class User {
     required this.image,
     required this.accessToken,
     required this.refreshToken,
+    this.age,
+    this.phone,
+    this.birthDate,
+    this.bloodGroup,
+    this.height,
+    this.weight,
+    this.role,
+    this.companyTitle,
+    this.companyDept,
+    this.addressText,
   });
 }

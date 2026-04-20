@@ -1,7 +1,7 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/atoms/shimmer_box.dart';
 import 'package:eliza_beauty/presentation/molecules/cart_item_card.dart';
-import 'package:eliza_beauty/presentation/providers/cart_provider.dart';
+import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -12,6 +12,7 @@ class CartList extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final cartState = ref.watch(cartNotifierProvider);
+    final l10n = context.l10n;
 
     return cartState.when(
       data: (carts) {
@@ -22,15 +23,23 @@ class CartList extends ConsumerWidget {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                const Icon(Icons.shopping_cart_outlined, size: 60, color: Colors.grey),
+                const Icon(
+                  Icons.shopping_cart_outlined,
+                  size: 60,
+                  color: Colors.grey,
+                ),
                 const SizedBox(height: 16),
                 Text(
-                  AppConstants.cartEmpty,
-                  style: GoogleFonts.inter(fontSize: 18, color: Colors.grey, fontWeight: FontWeight.w600),
+                  l10n.cartEmpty,
+                  style: GoogleFonts.inter(
+                    fontSize: 18,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.w600,
+                  ),
                 ),
                 const SizedBox(height: 8),
                 Text(
-                  AppConstants.addItemsToCartContinue,
+                  l10n.addItemsToCartContinue,
                   style: GoogleFonts.inter(fontSize: 14, color: Colors.grey),
                 ),
               ],
@@ -50,29 +59,35 @@ class CartList extends ConsumerWidget {
             }
 
             final product = allProducts[index];
-            final cart = carts.firstWhere((c) => c.products.any((p) => p.id == product.id));
+            final cart = carts.firstWhere(
+              (c) => c.products.any((p) => p.id == product.id),
+            );
 
             return CartItemCard(
               product: product,
               onQuantityChanged: (newQty) {
-                ref.read(cartNotifierProvider.notifier).updateItemQuantity(cart.id, product.id, newQty);
+                ref
+                    .read(cartNotifierProvider.notifier)
+                    .updateItemQuantity(cart.id, product.id, newQty);
               },
               onDelete: () {
-                ref.read(cartNotifierProvider.notifier).removeProduct(cart.id, product.id);
+                ref
+                    .read(cartNotifierProvider.notifier)
+                    .removeProduct(cart.id, product.id);
               },
             );
           },
         );
       },
       loading: () => _buildShimmerLoading(),
-      error: (err, stack) => Center(child: Text('${AppConstants.errorPrefix}$err')),
+      error: (err, stack) => Center(child: Text('${l10n.errorPrefix}$err')),
     );
   }
 
   Widget _buildShimmerLoading() {
     return ListView.builder(
       itemCount: 3,
-      itemBuilder: (_, __) => const Padding(
+      itemBuilder: (_, _) => const Padding(
         padding: EdgeInsets.all(16.0),
         child: ShimmerBox(width: double.infinity, height: 300),
       ),

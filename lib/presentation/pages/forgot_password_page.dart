@@ -1,4 +1,4 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/atoms/auth_navigation_link.dart';
 import 'package:eliza_beauty/presentation/molecules/auth_header_molecule.dart';
 import 'package:eliza_beauty/presentation/molecules/forgot_password_form_molecule.dart';
@@ -11,15 +11,16 @@ class ForgotPasswordPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = context.l10n;
     return AuthLayoutTemplate(
-      header: const AuthHeaderMolecule(
-        title: AppConstants.forgotPassword,
-        subtitle: AppConstants.emailRecLinkDec,
+      header: AuthHeaderMolecule(
+        title: l10n.forgotPassword,
+        subtitle: l10n.emailRecLinkDec,
       ),
       form: const ForgotPasswordFormMolecule(),
       footer: AuthNavigationLink(
-        label: AppConstants.passRemember,
-        actionText: AppConstants.backToLog,
+        label: l10n.passRemember,
+        actionText: l10n.backToLog,
         onActionPressed: () => context.pop(),
       ),
     );

@@ -1,4 +1,4 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/atoms/app_tagline.dart';
 import 'package:eliza_beauty/presentation/atoms/app_title.dart';
 import 'package:flutter/material.dart';
@@ -8,15 +8,15 @@ class RegisterHeaderMolecule extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Padding(
+    return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         mainAxisSize: MainAxisSize.min,
         children: [
-          AppTitle(title: AppConstants.createAcc),
+          AppTitle(title: context.l10n.createAcc),
           SizedBox(height: 8),
-          AppTagline(title: AppConstants.registerDesc),
+          AppTagline(title: context.l10n.registerDesc),
           SizedBox(height: 14),
         ],
       ),

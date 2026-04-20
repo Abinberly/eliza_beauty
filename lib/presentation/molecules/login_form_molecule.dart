@@ -1,10 +1,9 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/core/utils/validation_utils.dart';
 import 'package:eliza_beauty/presentation/atoms/app_text_formfield.dart';
-import 'package:eliza_beauty/presentation/providers/login_controller.dart';
+import 'package:eliza_beauty/presentation/providers/auth/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -21,6 +20,7 @@ class LoginFormMolecule extends HookConsumerWidget {
 
     final theme = context.colorScheme;
     final custom = context.customColors;
+    final l10n = context.l10n;
 
     final loginState = ref.watch(loginControllerProvider);
 
@@ -30,8 +30,8 @@ class LoginFormMolecule extends HookConsumerWidget {
         children: [
           AppTextFormField(
             id: 'login_email',
-            label: AppConstants.email,
-            hint: AppConstants.emailHint,
+            label: l10n.email,
+            hint: l10n.emailHint,
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             validator: ValidationUtils.validateEmail,
@@ -39,8 +39,8 @@ class LoginFormMolecule extends HookConsumerWidget {
           const SizedBox(height: 16),
           AppTextFormField(
             id: 'login_password',
-            label: AppConstants.password,
-            hint: AppConstants.passwordHint,
+            label: l10n.password,
+            hint: '*********',
             isPassword: true,
             controller: passwordController,
             validator: ValidationUtils.validatePassword,
@@ -61,7 +61,7 @@ class LoginFormMolecule extends HookConsumerWidget {
                   tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                 ),
                 child: Text(
-                  AppConstants.forgotPassword,
+                  l10n.forgotPassword,
                   style: GoogleFonts.inter(
                     fontSize: 14,
                     color: AppColors.forgotPass,
@@ -98,7 +98,7 @@ class LoginFormMolecule extends HookConsumerWidget {
                 ),
               ),
               child: Text(
-                AppConstants.signIn,
+                l10n.signIn,
                 style: GoogleFonts.inter(
                   color: custom.border,
                   fontWeight: .w600,

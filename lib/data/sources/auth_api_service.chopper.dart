@@ -37,9 +37,9 @@ final class _$AuthApiService extends AuthApiService {
   }
 
   @override
-  Future<Response<dynamic>> getCurrentUser() {
+  Future<Response<Map<String, dynamic>>> getCurrentUser() {
     final Uri $url = Uri.parse('/auth/me');
     final Request $request = Request('GET', $url, client.baseUrl);
-    return client.send<dynamic, dynamic>($request);
+    return client.send<Map<String, dynamic>, Map<String, dynamic>>($request);
   }
 }

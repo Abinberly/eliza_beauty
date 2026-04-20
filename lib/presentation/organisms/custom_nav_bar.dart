@@ -1,7 +1,8 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/presentation/molecules/nav_bar_item.dart';
 import 'package:eliza_beauty/presentation/organisms/nav_bar_painter.dart';
+import 'package:eliza_beauty/presentation/providers/app/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -24,13 +25,7 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
   late AnimationController _controller;
   late Animation<double> _animation;
   double _previousIndex = 0.0;
-
-  final List<Map<String, dynamic>> _navItems = [
-    {'label': AppConstants.home, 'icon': Icons.home_filled},
-    {'label': AppConstants.search, 'icon': Icons.search},
-    // {'label': AppConstants.cart, 'icon': Icons.shopping_cart},
-    {'label': AppConstants.account, 'icon': Icons.person},
-  ];
+  String? _lastLocale;
 
   @override
   void initState() {
@@ -54,7 +49,12 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
   @override
   void didUpdateWidget(covariant CustomNavBar oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.currentIndex != oldWidget.currentIndex) {
+
+    final currentLocale = ref.read(appLocaleProvider).valueOrNull?.languageCode;
+    final bool localeChanged =
+        _lastLocale != null && _lastLocale != currentLocale;
+
+    if (widget.currentIndex != oldWidget.currentIndex || localeChanged) {
       _animation = Tween<double>(
         begin: _previousIndex,
         end: widget.currentIndex.toDouble(),
@@ -62,6 +62,7 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
       _controller.forward(from: 0);
       _previousIndex = widget.currentIndex.toDouble();
     }
+    _lastLocale = currentLocale;
   }
 
   void _onItemTapped(int index) {
@@ -71,6 +72,15 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
   @override
   Widget build(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
+    final locale = ref.watch(appLocaleProvider).valueOrNull;
+    final String langCode = locale?.languageCode ?? 'en';
+    final bool isRtl = langCode == 'ar';
+
+    final List<Map<String, dynamic>> navItems = [
+      {'label': context.l10n.home, 'icon': Icons.home_filled},
+      {'label': context.l10n.search, 'icon': Icons.search},
+      {'label': context.l10n.account, 'icon': Icons.person},
+    ];
 
     return Container(
       height: 120,
@@ -87,7 +97,8 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
                   size: Size(width, 100),
                   painter: NavBarPainter(
                     position: _animation.value,
-                    itemCount: _navItems.length,
+                    itemCount: navItems.length,
+                    isRtl: isRtl,
                   ),
                 ),
               );
@@ -97,12 +108,12 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
           // Navigation Items
           Row(
             crossAxisAlignment: CrossAxisAlignment.end,
-            children: List.generate(_navItems.length, (index) {
+            children: List.generate(navItems.length, (index) {
               return Expanded(
                 child: NavBarItem(
-                  label: _navItems[index]['label'],
-                  icon: _navItems[index]['icon'],
-                  imageUrl: _navItems[index]['imageUrl'],
+                  label: navItems[index]['label'],
+                  icon: navItems[index]['icon'],
+                  imageUrl: navItems[index]['imageUrl'],
                   isSelected: widget.currentIndex == index,
                   onTap: () => _onItemTapped(index),
                 ),
@@ -114,9 +125,13 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
           AnimatedBuilder(
             animation: _animation,
             builder: (context, child) {
-              double itemWidth = width / _navItems.length;
+              double itemWidth = width / navItems.length;
+              // Mirror position for RTL, same as NavBarPainter
+              double adjustedPosition = isRtl
+                  ? (navItems.length - 1 - _animation.value)
+                  : _animation.value;
               double leftPosition =
-                  (_animation.value * itemWidth) + (itemWidth / 2) - 28;
+                  (adjustedPosition * itemWidth) + (itemWidth / 2) - 28;
 
               return Positioned(
                 bottom: 45,
@@ -130,15 +145,15 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: _navItems[widget.currentIndex]['imageUrl'] != null
+                      child: navItems[widget.currentIndex]['imageUrl'] != null
                           ? CircleAvatar(
                               radius: 14,
                               backgroundImage: NetworkImage(
-                                _navItems[widget.currentIndex]['imageUrl'],
+                                navItems[widget.currentIndex]['imageUrl'],
                               ),
                             )
                           : Icon(
-                              _navItems[widget.currentIndex]['icon'],
+                              navItems[widget.currentIndex]['icon'],
                               color: Colors.white,
                               size: 28,
                             ),

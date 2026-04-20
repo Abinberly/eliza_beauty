@@ -1,7 +1,7 @@
 import 'package:eliza_beauty/core/theme/app_images.dart';
 import 'package:eliza_beauty/presentation/atoms/gradient_progress_bar.dart';
 import 'package:eliza_beauty/presentation/molecules/splash_content.dart';
-import 'package:eliza_beauty/presentation/providers/splash_provider.dart';
+import 'package:eliza_beauty/presentation/providers/app/splash_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';

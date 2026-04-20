@@ -1,4 +1,3 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/core/utils/validation_utils.dart';
 import 'package:eliza_beauty/presentation/atoms/app_text_formfield.dart';
@@ -15,6 +14,7 @@ class ForgotPasswordFormMolecule extends HookConsumerWidget {
     final emailController = useTextEditingController();
     final formKey = useMemoized(() => GlobalKey<FormState>());
     final theme = context.colorScheme;
+    final l10n = context.l10n;
 
     return Form(
       key: formKey,
@@ -22,8 +22,8 @@ class ForgotPasswordFormMolecule extends HookConsumerWidget {
         children: [
           AppTextFormField(
             id: 'forgot_email',
-            label: AppConstants.email,
-            hint: AppConstants.emailHint,
+            label: l10n.email,
+            hint: l10n.emailHint,
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             validator: ValidationUtils.validateEmail,
@@ -45,7 +45,7 @@ class ForgotPasswordFormMolecule extends HookConsumerWidget {
                 ),
               ),
               child: Text(
-                AppConstants.sendResetLink,
+                l10n.sendResetLink,
                 style: GoogleFonts.inter(
                   color: Colors.white,
                   fontWeight: FontWeight.w600,

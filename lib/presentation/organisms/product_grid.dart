@@ -1,8 +1,7 @@
 import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/constants/app_constants.dart';
-import 'package:eliza_beauty/presentation/atoms/product_card.dart';
-import 'package:eliza_beauty/presentation/atoms/shimmer_box.dart';
-import 'package:eliza_beauty/presentation/providers/shop_providers.dart';
+import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/presentation/molecules/product_card.dart';
+import 'package:eliza_beauty/presentation/providers/shop/shop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -17,8 +16,8 @@ class SliverProductList extends ConsumerWidget {
     return productsAsync.when(
       data: (products) {
         if (products.isEmpty) {
-          return const SliverToBoxAdapter(
-            child: Center(child: Text(AppConstants.noProductsFound)),
+          return SliverToBoxAdapter(
+            child: Center(child: Text(context.l10n.noProductsFound)),
           );
         }
 
@@ -42,7 +41,6 @@ class SliverProductList extends ConsumerWidget {
                     ),
                   );
                 } else {
-
                   final hasMore = ref
                       .watch(productsByCategoryProvider.notifier)
                       .hasMore;
@@ -67,8 +65,9 @@ class SliverProductList extends ConsumerWidget {
       loading: () => const SliverToBoxAdapter(
         child: Center(child: CircularProgressIndicator()),
       ),
-      error: (error, stack) =>
-          SliverToBoxAdapter(child: Center(child: Text("${AppConstants.errorPrefix}$error"))),
+      error: (error, stack) => SliverToBoxAdapter(
+        child: Center(child: Text("${context.l10n.errorPrefix}$error")),
+      ),
     );
   }
 }

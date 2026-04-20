@@ -1,5 +1,5 @@
 import 'package:eliza_beauty/presentation/atoms/category_capsule.dart';
-import 'package:eliza_beauty/presentation/providers/shop_providers.dart';
+import 'package:eliza_beauty/presentation/providers/shop/shop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -17,6 +17,7 @@ class CategoryListBar extends ConsumerWidget {
         child: ListView.builder(
           scrollDirection: Axis.horizontal,
           itemCount: categories.length,
+          padding: EdgeInsets.symmetric(horizontal: 20),
           itemBuilder: (context, index) {
             final category = categories[index];
             return Padding(

@@ -4,8 +4,13 @@ import 'package:flutter/material.dart';
 class NavBarPainter extends CustomPainter {
   final double position;
   final int itemCount;
+  final bool isRtl;
 
-  NavBarPainter({required this.position, required this.itemCount});
+  NavBarPainter({
+    required this.position,
+    required this.itemCount,
+    this.isRtl = false,
+  });
 
   @override
   void paint(Canvas canvas, Size size) {
@@ -14,10 +19,11 @@ class NavBarPainter extends CustomPainter {
       ..style = PaintingStyle.fill;
 
     Path path = Path();
-    
+
     double itemWidth = size.width / itemCount;
-    double centerPoint = (position * itemWidth) + (itemWidth / 2);
-    
+    double adjustedPosition = isRtl ? (itemCount - 1 - position) : position;
+    double centerPoint = (adjustedPosition * itemWidth) + (itemWidth / 2);
+
     double top = 20.0;
     double holeWidth = 70.0;
     double holeDepth = 40.0;
@@ -27,15 +33,21 @@ class NavBarPainter extends CustomPainter {
     path.lineTo(centerPoint - (holeWidth / 2) - 10, top);
 
     path.cubicTo(
-      centerPoint - (holeWidth / 3), top,
-      centerPoint - (holeWidth / 2), top + holeDepth,
-      centerPoint, top + holeDepth,
+      centerPoint - (holeWidth / 3),
+      top,
+      centerPoint - (holeWidth / 2),
+      top + holeDepth,
+      centerPoint,
+      top + holeDepth,
     );
 
     path.cubicTo(
-      centerPoint + (holeWidth / 2), top + holeDepth, 
-      centerPoint + (holeWidth / 3), top, 
-      centerPoint + (holeWidth / 2) + 10, top, 
+      centerPoint + (holeWidth / 2),
+      top + holeDepth,
+      centerPoint + (holeWidth / 3),
+      top,
+      centerPoint + (holeWidth / 2) + 10,
+      top,
     );
 
     path.lineTo(size.width, top);
@@ -48,6 +60,6 @@ class NavBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant NavBarPainter oldDelegate) {
-    return oldDelegate.position != position;
+    return oldDelegate.position != position || oldDelegate.isRtl != isRtl;
   }
 }

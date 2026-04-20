@@ -1,4 +1,3 @@
-import 'package:eliza_beauty/core/constants/app_constants.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/core/utils/validation_utils.dart';
 import 'package:eliza_beauty/presentation/atoms/app_text_formfield.dart';
@@ -20,6 +19,7 @@ class RegisterFormMolecule extends HookConsumerWidget {
 
     final theme = context.colorScheme;
     final custom = context.customColors;
+    final l10n = context.l10n;
 
     // final registerState = ref.watch(registerControllerProvider);
 
@@ -29,19 +29,19 @@ class RegisterFormMolecule extends HookConsumerWidget {
         children: [
           AppTextFormField(
             id: 'register_name',
-            label: AppConstants.fullName,
-            hint: AppConstants.fullNameHint,
+            label: l10n.fullName,
+            hint: l10n.fullNameHint,
             controller: nameController,
             keyboardType: TextInputType.name,
             validator: (value) => value != null && value.isNotEmpty
                 ? null
-                : AppConstants.errNameRequired,
+                : l10n.errNameRequired,
           ),
           const SizedBox(height: 16),
           AppTextFormField(
             id: 'register_email',
-            label: AppConstants.email,
-            hint: AppConstants.emailHint,
+            label: l10n.email,
+            hint: l10n.emailHint,
             controller: emailController,
             keyboardType: TextInputType.emailAddress,
             validator: ValidationUtils.validateEmail,
@@ -49,8 +49,8 @@ class RegisterFormMolecule extends HookConsumerWidget {
           const SizedBox(height: 16),
           AppTextFormField(
             id: 'register_password',
-            label: AppConstants.password,
-            hint: AppConstants.passwordHint,
+            label: l10n.password,
+            hint: '*******',
             isPassword: true,
             controller: passwordController,
             validator: ValidationUtils.validatePassword,
@@ -58,13 +58,13 @@ class RegisterFormMolecule extends HookConsumerWidget {
           const SizedBox(height: 16),
           AppTextFormField(
             id: 'register_confirm_password',
-            label: AppConstants.confirmPass,
-            hint: AppConstants.confirmPassHint,
+            label: l10n.confirmPass,
+            hint: l10n.confirmPassHint,
             isPassword: true,
             controller: confirmPasswordController,
             validator: (value) {
               if (value != passwordController.text) {
-                return AppConstants.errPasswordMatching;
+                return l10n.errPasswordMatching;
               }
               return ValidationUtils.validatePassword(value);
             },
@@ -92,7 +92,7 @@ class RegisterFormMolecule extends HookConsumerWidget {
                 ),
               ),
               child: Text(
-                AppConstants.createAcc,
+                l10n.createAcc,
                 style: GoogleFonts.inter(
                   color: custom.border,
                   fontWeight: FontWeight.w600,
