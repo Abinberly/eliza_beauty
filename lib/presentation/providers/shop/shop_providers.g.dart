@@ -6,7 +6,7 @@ part of 'shop_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$categoriesHash() => r'77eec094118e826d8b982d23ccd577e7e68404f2';
+String _$categoriesHash() => r'b519738265401744e8ae0c1f146384c39fdb5689';
 
 /// See also [categories].
 @ProviderFor(categories)
@@ -41,7 +41,7 @@ final selectedCategoryProvider =
 
 typedef _$SelectedCategory = AutoDisposeNotifier<String>;
 String _$productsByCategoryHash() =>
-    r'b7a17f83d6b6104a614b3222643c3c022de39a26';
+    r'7bdab8c1301a7beca61cfff4f3c6a1806783b42f';
 
 /// See also [ProductsByCategory].
 @ProviderFor(ProductsByCategory)

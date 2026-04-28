@@ -1,8 +1,12 @@
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/core/utils/alert_service.dart';
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/molecules/rating_row.dart';
+import 'package:eliza_beauty/presentation/widgets/app_network_image.dart';
+import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
+import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +14,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SimilarProductCard extends ConsumerWidget {
+class SearchItemCard extends ConsumerWidget {
   final ProductModel product;
-  const SimilarProductCard({super.key, required this.product});
+  const SearchItemCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -27,13 +31,31 @@ class SimilarProductCard extends ConsumerWidget {
         product.price - (product.price * (product.discountPercentage / 100));
 
     return GestureDetector(
-      onTap: () => context.pushNamed(
-        AppRoutes.prodDetailsName,
-        pathParameters: {'id': product.id.toString()},
-      ),
+      onTap: () {
+        final isConnected = ref.read(connectivityNotifierProvider);
+        if (!isConnected) {
+          NetworkErrorDialog.show(
+            context,
+            onRetry: () async {
+              await ref.read(connectivityNotifierProvider.notifier).refresh();
+              if (!ref.context.mounted) return;
+              
+              if (ref.read(connectivityNotifierProvider)) {
+                context.pushNamed(
+                  AppRoutes.prodDetailsName,
+                  pathParameters: {'id': product.id.toString()},
+                );
+              }
+            },
+          );
+        } else {
+          context.pushNamed(
+            AppRoutes.prodDetailsName,
+            pathParameters: {'id': product.id.toString()},
+          );
+        }
+      },
       child: Container(
-        width: 160,
-        height: 280, // strict dimension helps prevent lists from breaking.
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -50,25 +72,23 @@ class SimilarProductCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            SizedBox(
-              height: 120, // fixed image height natively blocks layout crashes
+            Expanded(
               child: ColoredBox(
                 color: AppColors.lightGray,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(product.thumbnail, fit: BoxFit.cover),
+                    AppNetworkImage(imageUrl: product.thumbnail, fit: BoxFit.cover),
                     Positioned(
                       top: 8,
                       right: 8,
                       child: CircleAvatar(
                         backgroundColor: Colors.white.withValues(alpha: 0.5),
-                        radius: 12,
+                        radius: 18,
                         child: IconButton(
-                          padding: EdgeInsets.zero,
                           icon: Icon(
                             Icons.favorite_border,
-                            size: 14,
+                            size: 20,
                             color: AppColors.error.withValues(alpha: 0.8),
                           ),
                           onPressed: () {},
@@ -81,7 +101,7 @@ class SimilarProductCard extends ConsumerWidget {
                         left: 8,
                         child: Container(
                           padding: const EdgeInsets.symmetric(
-                            horizontal: 4,
+                            horizontal: 6,
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
@@ -92,7 +112,7 @@ class SimilarProductCard extends ConsumerWidget {
                             "${product.discountPercentage.round()}% OFF",
                             style: GoogleFonts.poppins(
                               color: Colors.white,
-                              fontSize: 8,
+                              fontSize: 10,
                               fontWeight: FontWeight.bold,
                             ),
                           ),
@@ -104,7 +124,7 @@ class SimilarProductCard extends ConsumerWidget {
             ),
 
             Padding(
-              padding: const EdgeInsets.all(8.0),
+              padding: const EdgeInsets.all(12.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -112,7 +132,6 @@ class SimilarProductCard extends ConsumerWidget {
                     product.title,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
-                      fontSize: 12, // scaled down text for smaller horiz lists
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -127,35 +146,41 @@ class SimilarProductCard extends ConsumerWidget {
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: colorScheme.onSurface,
-                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(width: 4),
+                      const SizedBox(width: 8),
                       Text(
                         "\$${product.price.toStringAsFixed(2)}",
                         style: theme.textTheme.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
                           color: theme.hintColor,
-                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 4),
-                  RatingRow(rating: product.rating, count: product.reviewCount, isSearchView: true,),
+                  const SizedBox(height: 8),
+                  RatingRow(
+                    rating: product.rating,
+                    count: product.reviewCount,
+                    isSearchView: true,
+                  ),
                 ],
               ),
             ),
 
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 10),
+              padding: EdgeInsets.symmetric(horizontal: 12),
               width: double.infinity,
-              height: 32,
+              height: 36,
               child: FilledButton(
                 onPressed: cartState.isLoading
                     ? null
                     : () {
+                       final isConnected = ref.read(
+                          connectivityNotifierProvider,
+                        );
+                        if (!isConnected) {return;}
                         if (userAsync.value == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -170,28 +195,22 @@ class SimilarProductCard extends ConsumerWidget {
                             .read(cartNotifierProvider.notifier)
                             .addItemToCart(user.id, product);
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${product.title}${l10n.addedToCartSuffix}',
-                            ),
-                            duration: const Duration(seconds: 2),
-                          ),
+                        AlertService.showSuccess(
+                          context,
+                          '${product.title}${l10n.addedToCartSuffix}',
                         );
                       },
                 style: FilledButton.styleFrom(
-                  padding: EdgeInsets.zero,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(6),
+                    borderRadius: BorderRadius.circular(8),
                   ),
                 ),
-                child: Text( cartState.isLoading
-                    ? l10n.adding
-                    : l10n.addToCart, 
+                child: Text(
+                  cartState.isLoading ? l10n.adding : l10n.addToCart,
                   style: GoogleFonts.inter(
                     fontWeight: .w600,
-                    fontSize: 10,
-                    color: Colors.white
+                    fontSize: 12,
+                    color: Colors.white,
                   ),
                 ),
               ),

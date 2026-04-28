@@ -21,7 +21,15 @@ class NavBarPainter extends CustomPainter {
     Path path = Path();
 
     double itemWidth = size.width / itemCount;
-    double adjustedPosition = isRtl ? (itemCount - 1 - position) : position;
+
+    final double clampedPosition = position.clamp(
+      0.0,
+      (itemCount - 1).toDouble(),
+    );
+
+    double adjustedPosition = isRtl
+        ? (itemCount - 1 - clampedPosition)
+        : clampedPosition;
     double centerPoint = (adjustedPosition * itemWidth) + (itemWidth / 2);
 
     double top = 20.0;
@@ -60,6 +68,8 @@ class NavBarPainter extends CustomPainter {
 
   @override
   bool shouldRepaint(covariant NavBarPainter oldDelegate) {
-    return oldDelegate.position != position || oldDelegate.isRtl != isRtl;
+    return oldDelegate.position != position ||
+        oldDelegate.isRtl != isRtl ||
+        oldDelegate.itemCount != itemCount;
   }
 }

@@ -121,5 +121,10 @@
     "audioTitle": "Future of Sound",
     "audioSubtitle": "Immersive precision engineering.",
     "newNarratives": "New Narratives",
-    "editorsChoice": "EDITOR'S CHOICE"
+    "editorsChoice": "EDITOR'S CHOICE",
+    "continueShopping": "Continue Shopping",
+    "networkErrorTitle": "No Internet Connection",
+    "networkErrorMessage": "Please check your internet connection and try again.",
+    "networkErrorRetry": "Retry",
+    "networkErrorDismiss": "Dismiss"
 }

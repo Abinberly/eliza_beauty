@@ -823,6 +823,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'EDITOR\'S CHOICE'**
   String get editorsChoice;
+
+  /// No description provided for @continueShopping.
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Shopping'**
+  String get continueShopping;
+
+  /// No description provided for @networkErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Internet Connection'**
+  String get networkErrorTitle;
+
+  /// No description provided for @networkErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get networkErrorMessage;
+
+  /// No description provided for @networkErrorRetry.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get networkErrorRetry;
+
+  /// No description provided for @networkErrorDismiss.
+  ///
+  /// In en, this message translates to:
+  /// **'Dismiss'**
+  String get networkErrorDismiss;
 }
 
 class _AppLocalizationsDelegate

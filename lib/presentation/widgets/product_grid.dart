@@ -1,6 +1,8 @@
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/molecules/product_card.dart';
+import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
+import 'package:eliza_beauty/presentation/widgets/product_card.dart';
 import 'package:eliza_beauty/presentation/providers/shop/shop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -33,10 +35,32 @@ class SliverProductList extends ConsumerWidget {
                     child: ProductCard(
                       product: product,
                       onTap: () {
-                        context.pushNamed(
-                          AppRoutes.prodDetailsName,
-                          pathParameters: {'id': product.id.toString()},
+                        final isConnected = ref.read(
+                          connectivityNotifierProvider,
                         );
+                        if (!isConnected) {
+                          NetworkErrorDialog.show(
+                            context,
+                            onRetry: () async {
+                              await ref
+                                  .read(connectivityNotifierProvider.notifier)
+                                  .refresh();
+                              if (!ref.context.mounted) return;
+
+                              if (ref.read(connectivityNotifierProvider)) {
+                                context.pushNamed(
+                                  AppRoutes.prodDetailsName,
+                                  pathParameters: {'id': product.id.toString()},
+                                );
+                              }
+                            },
+                          );
+                        } else {
+                          context.pushNamed(
+                            AppRoutes.prodDetailsName,
+                            pathParameters: {'id': product.id.toString()},
+                          );
+                        }
                       },
                     ),
                   );

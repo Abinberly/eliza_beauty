@@ -47,6 +47,7 @@ class UserModel extends User {
         : null,
   );
 
+  /// Serializes ALL user fields for complete offline profile restoration.
   Map<String, dynamic> toJson() => {
     'id': id,
     'username': username,
@@ -57,9 +58,26 @@ class UserModel extends User {
     'image': image,
     'accessToken': accessToken,
     'refreshToken': refreshToken,
+    'age': age,
+    'phone': phone,
+    'birthDate': birthDate,
+    'bloodGroup': bloodGroup,
+    'height': height,
+    'weight': weight,
+    'role': role,
+    'company': (companyTitle != null || companyDept != null)
+        ? {'title': companyTitle, 'department': companyDept}
+        : null,
+    'address': addressText != null
+        ? {
+            'address': addressText!.split(', ').firstOrNull ?? '',
+            'city': addressText!.split(', ').elementAtOrNull(1) ?? '',
+            'state': addressText!.split(', ').elementAtOrNull(2) ?? '',
+          }
+        : null,
   };
 
-UserModel copyWith({
+  UserModel copyWith({
     dynamic id,
     String? username,
     String? email,
@@ -69,6 +87,16 @@ UserModel copyWith({
     String? image,
     String? accessToken,
     String? refreshToken,
+    int? age,
+    String? phone,
+    String? birthDate,
+    String? bloodGroup,
+    double? height,
+    double? weight,
+    String? role,
+    String? companyTitle,
+    String? companyDept,
+    String? addressText,
   }) {
     return UserModel(
       id: id ?? this.id,
@@ -80,6 +108,16 @@ UserModel copyWith({
       image: image ?? this.image,
       accessToken: accessToken ?? this.accessToken,
       refreshToken: refreshToken ?? this.refreshToken,
+      age: age ?? this.age,
+      phone: phone ?? this.phone,
+      birthDate: birthDate ?? this.birthDate,
+      bloodGroup: bloodGroup ?? this.bloodGroup,
+      height: height ?? this.height,
+      weight: weight ?? this.weight,
+      role: role ?? this.role,
+      companyTitle: companyTitle ?? this.companyTitle,
+      companyDept: companyDept ?? this.companyDept,
+      addressText: addressText ?? this.addressText,
     );
   }
 

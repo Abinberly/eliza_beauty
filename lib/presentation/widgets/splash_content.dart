@@ -1,6 +1,6 @@
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/atoms/app_tagline.dart';
-import 'package:eliza_beauty/presentation/atoms/app_title.dart';
+import 'package:eliza_beauty/presentation/widgets/app_tagline.dart';
+import 'package:eliza_beauty/presentation/widgets/app_title.dart';
 import 'package:flutter/material.dart';
 
 class SplashContent extends StatelessWidget {

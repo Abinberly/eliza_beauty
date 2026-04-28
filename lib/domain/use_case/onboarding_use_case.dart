@@ -1,7 +1,7 @@
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
+import 'package:eliza_beauty/domain/repository/storage_repository.dart';
 
 class CompleteOnboardingUseCase {
-  final SecureStorageHelper _storage;
+  final StorageRepository _storage;
 
   CompleteOnboardingUseCase(this._storage);
 

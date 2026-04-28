@@ -6,11 +6,14 @@ part of 'user_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$liveUserProfileHash() => r'8873e7e3a59ab7ff16b3c5977915461ba0c5d2bc';
+String _$liveUserProfileHash() => r'8789c2ffc59f221bc9e104dbf361f2c2a2789e3b';
 
-/// See also [liveUserProfile].
+/// Fetches live user profile from API.
+/// Falls back to cached userProfile on failure (offline).
+///
+/// Copied from [liveUserProfile].
 @ProviderFor(liveUserProfile)
-final liveUserProfileProvider = AutoDisposeFutureProvider<User>.internal(
+final liveUserProfileProvider = AutoDisposeFutureProvider<User?>.internal(
   liveUserProfile,
   name: r'liveUserProfileProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -22,7 +25,7 @@ final liveUserProfileProvider = AutoDisposeFutureProvider<User>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef LiveUserProfileRef = AutoDisposeFutureProviderRef<User>;
+typedef LiveUserProfileRef = AutoDisposeFutureProviderRef<User?>;
 String _$userProfileHash() => r'4051bba17f4529f24a12c2238e63bd3195d0ba2a';
 
 /// See also [UserProfile].

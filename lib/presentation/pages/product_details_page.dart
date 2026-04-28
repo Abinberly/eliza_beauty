@@ -1,14 +1,17 @@
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_images.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/core/utils/alert_service.dart';
 import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/atoms/app_title.dart';
-import 'package:eliza_beauty/presentation/molecules/similar_product_card.dart';
-import 'package:eliza_beauty/presentation/molecules/product_header_section.dart';
-import 'package:eliza_beauty/presentation/molecules/product_image_gallery.dart';
-import 'package:eliza_beauty/presentation/molecules/rating_row.dart';
-import 'package:eliza_beauty/presentation/organisms/product_extra_details.dart';
+import 'package:eliza_beauty/presentation/widgets/app_title.dart';
+import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
+import 'package:eliza_beauty/presentation/widgets/similar_product_card.dart';
+import 'package:eliza_beauty/presentation/widgets/product_header_section.dart';
+import 'package:eliza_beauty/presentation/widgets/product_image_gallery.dart';
+import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
+import 'package:eliza_beauty/presentation/widgets/product_extra_details.dart';
 import 'package:eliza_beauty/presentation/providers/shop/details_provider.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
@@ -38,7 +41,26 @@ class ProductDetailsPage extends ConsumerWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () => context.push(AppRoutes.cart),
+            onPressed: () {
+              final isConnected = ref.read(connectivityNotifierProvider);
+              if (!isConnected) {
+                NetworkErrorDialog.show(
+                  context,
+                  onRetry: () async {
+                    await ref
+                        .read(connectivityNotifierProvider.notifier)
+                        .refresh();
+                    if (!ref.context.mounted) return;
+
+                    if (ref.read(connectivityNotifierProvider)) {
+                      context.push(AppRoutes.cart);
+                    }
+                  },
+                );
+              } else {
+                context.push(AppRoutes.cart);
+              }
+            },
             icon: Image.asset(AppImages.bagIcon),
           ),
           SizedBox(width: 20),
@@ -96,11 +118,11 @@ class ProductDetailsPage extends ConsumerWidget {
                 ),
               ),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
 
               ProductExtraDetails(product: product),
 
-              const SizedBox(height: 40),
+              const SizedBox(height: 20),
               Text(
                 l10n.customerExperience,
                 style: GoogleFonts.poppins(
@@ -151,13 +173,9 @@ class ProductDetailsPage extends ConsumerWidget {
                   .read(cartNotifierProvider.notifier)
                   .addItemToCart(user.id, product);
 
-              ScaffoldMessenger.of(context).showSnackBar(
-                SnackBar(
-                  content: Text(
-                    '${product.title}${context.l10n.addedToCartSuffix}',
-                  ),
-                  duration: const Duration(seconds: 2),
-                ),
+              AlertService.showSuccess(
+                context,
+                '${product.title}${context.l10n.addedToCartSuffix}',
               );
             },
       style: ElevatedButton.styleFrom(
@@ -235,34 +253,39 @@ class ProductDetailsPage extends ConsumerWidget {
       },
     );
   }
-  Widget _buildSimilarProducts(BuildContext context, WidgetRef ref, String category, int currentProductId) {
+
+  Widget _buildSimilarProducts(
+    BuildContext context,
+    WidgetRef ref,
+    String category,
+    int currentProductId,
+  ) {
     final similarAsync = ref.watch(similarProductsProvider(category));
     return similarAsync.when(
       data: (products) {
-        final filtered = products.where((p) => p.id != currentProductId).toList();
+        final filtered = products
+            .where((p) => p.id != currentProductId)
+            .toList();
         if (filtered.isEmpty) return const SizedBox.shrink();
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-
-              Text(
-                context.l10n.similarProducts,
-                style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
+            Text(
+              context.l10n.similarProducts,
+              style: GoogleFonts.poppins(
+                fontSize: 22,
+                fontWeight: FontWeight.bold,
               ),
-              const SizedBox(height: 16),
+            ),
+            const SizedBox(height: 16),
             SizedBox(
-              height: 280, 
+              height: 280,
               child: ListView.separated(
                 scrollDirection: Axis.horizontal,
                 itemCount: filtered.length,
                 separatorBuilder: (_, _) => const SizedBox(width: 16),
                 itemBuilder: (context, index) {
-                  return SimilarProductCard(
-                    product: filtered[index]
-                  );
+                  return SimilarProductCard(product: filtered[index]);
                 },
               ),
             ),

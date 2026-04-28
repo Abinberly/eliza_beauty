@@ -24,7 +24,7 @@ class OnboardingNotifier extends _$OnboardingNotifier {
   }
 
   Future<void> completeOnboarding(BuildContext context, {required VoidCallback onSuccess}) async {
-    final storage = ref.read(secureStorageHelperProvider);
+    final storage = ref.read(storageRepositoryProvider);
     await CompleteOnboardingUseCase(storage).call();
 
     onSuccess();

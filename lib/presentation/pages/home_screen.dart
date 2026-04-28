@@ -1,12 +1,14 @@
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_images.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/atoms/app_title.dart';
-import 'package:eliza_beauty/presentation/molecules/carousel_shimmer.dart';
-import 'package:eliza_beauty/presentation/molecules/category_list_bar.dart';
-import 'package:eliza_beauty/presentation/molecules/product_card_shimmer.dart';
-import 'package:eliza_beauty/presentation/organisms/feature_carousel.dart';
-import 'package:eliza_beauty/presentation/organisms/product_grid.dart';
+import 'package:eliza_beauty/presentation/widgets/app_title.dart';
+import 'package:eliza_beauty/presentation/widgets/carousel_shimmer.dart';
+import 'package:eliza_beauty/presentation/widgets/category_list_bar.dart';
+import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
+import 'package:eliza_beauty/presentation/widgets/product_card_shimmer.dart';
+import 'package:eliza_beauty/presentation/widgets/feature_carousel.dart';
+import 'package:eliza_beauty/presentation/widgets/product_grid.dart';
 import 'package:eliza_beauty/presentation/providers/shop/shop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -55,7 +57,27 @@ class _HomePageState extends ConsumerState<HomeScreen> {
 
         actions: [
           IconButton(
-            onPressed: () => context.push(AppRoutes.cart),
+            onPressed: () {
+              final isConnected = ref.read(connectivityNotifierProvider);
+
+              if (!isConnected) {
+                NetworkErrorDialog.show(
+                  context,
+                  onRetry: () async {
+                    await ref
+                        .read(connectivityNotifierProvider.notifier)
+                        .refresh();
+                    if (!ref.context.mounted) return;
+
+                    if (ref.read(connectivityNotifierProvider)) {
+                      context.push(AppRoutes.cart);
+                    }
+                  },
+                );
+              } else {
+                context.push(AppRoutes.cart);
+              }
+            },
             icon: Image.asset(AppImages.bagIcon),
           ),
           SizedBox(width: 20),
@@ -69,9 +91,12 @@ class _HomePageState extends ConsumerState<HomeScreen> {
     final categoriesAsync = ref.watch(categoriesProvider);
     final productsAsync = ref.watch(productsByCategoryProvider);
 
-    final isInitialLoading = categoriesAsync.isLoading ||
+    final isInitialLoading =
+        categoriesAsync.isLoading ||
         (productsAsync.isLoading && !productsAsync.hasValue) ||
-        (categoriesAsync.hasValue && productsAsync.valueOrNull?.isEmpty == true && !productsAsync.hasError);
+        (categoriesAsync.hasValue &&
+            productsAsync.valueOrNull?.isEmpty == true &&
+            !productsAsync.hasError);
 
     if (isInitialLoading) {
       return CustomScrollView(

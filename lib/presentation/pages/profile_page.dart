@@ -1,10 +1,11 @@
 import 'package:eliza_beauty/core/router/app_routes.dart';
+import 'package:eliza_beauty/domain/entities/user.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_images.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/data/local/language_local_service.dart';
-import 'package:eliza_beauty/presentation/molecules/settings_tile.dart';
-import 'package:eliza_beauty/presentation/organisms/settings_group.dart';
+import 'package:eliza_beauty/presentation/widgets/settings_tile.dart';
+import 'package:eliza_beauty/presentation/widgets/settings_group.dart';
 import 'package:eliza_beauty/presentation/providers/app/locale_provider.dart';
 import 'package:eliza_beauty/presentation/providers/auth/login_controller.dart';
 import 'package:eliza_beauty/presentation/providers/app/theme_notifier.dart';
@@ -36,8 +37,31 @@ class ProfilePage extends ConsumerWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: liveUserAsync.when(
         loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('${l10n.errorPrefix} $e')),
-        data: (user) => SingleChildScrollView(
+        error: (e, _) {
+          // Offline fallback — use cached profile
+          final cachedUser = ref.read(userProfileProvider).value;
+          if (cachedUser != null) {
+            return _buildProfileContent(context, ref, cachedUser, theme, l10n);
+          }
+          return Center(child: Text('${l10n.errorPrefix} $e'));
+        },
+        data: (user) {
+          if (user == null) {
+            // Fallback to cached
+            final cachedUser = ref.read(userProfileProvider).value;
+            if (cachedUser != null) {
+              return _buildProfileContent(context, ref, cachedUser, theme, l10n);
+            }
+            return Center(child: Text(l10n.errorPrefix));
+          }
+          return _buildProfileContent(context, ref, user, theme, l10n);
+        },
+      ),
+    );
+  }
+
+  Widget _buildProfileContent(BuildContext context, WidgetRef ref, User user, ThemeData theme, dynamic l10n) {
+    return SingleChildScrollView(
           padding: const EdgeInsets.all(20),
           child: SafeArea(
             child: Column(
@@ -176,7 +200,7 @@ class ProfilePage extends ConsumerWidget {
                       trailing: Switch(
                         activeThumbColor: theme.colorScheme.primary,
                         value:
-                            ref.watch(themeNotifierProvider) == ThemeMode.dark,
+                            ref.watch(themeNotifierProvider).value == ThemeMode.dark,
                         onChanged: (value) =>
                             ref.read(themeNotifierProvider.notifier).toggle(),
                       ),
@@ -211,8 +235,6 @@ class ProfilePage extends ConsumerWidget {
               ],
             ),
           ),
-        ),
-      ),
     );
   }
 

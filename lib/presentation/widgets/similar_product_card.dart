@@ -1,8 +1,11 @@
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/core/utils/alert_service.dart';
 import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/molecules/rating_row.dart';
+import 'package:eliza_beauty/presentation/widgets/app_network_image.dart';
+import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -10,9 +13,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-class SearchItemCard extends ConsumerWidget {
+class SimilarProductCard extends ConsumerWidget {
   final ProductModel product;
-  const SearchItemCard({super.key, required this.product});
+  const SimilarProductCard({super.key, required this.product});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -32,6 +35,8 @@ class SearchItemCard extends ConsumerWidget {
         pathParameters: {'id': product.id.toString()},
       ),
       child: Container(
+        width: 160,
+        height: 280,
         clipBehavior: Clip.antiAlias,
         decoration: BoxDecoration(
           color: colorScheme.surface,
@@ -48,59 +53,64 @@ class SearchItemCard extends ConsumerWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Expanded(
+            SizedBox(
+              height: 120,
               child: ColoredBox(
                 color: AppColors.lightGray,
                 child: Stack(
                   fit: StackFit.expand,
                   children: [
-                    Image.network(product.thumbnail, fit: BoxFit.cover),
+                    AppNetworkImage(
+                      imageUrl: product.thumbnail,
+                      fit: BoxFit.cover,
+                    ),
                     Positioned(
                       top: 8,
                       right: 8,
                       child: CircleAvatar(
-                      backgroundColor: Colors.white.withValues(alpha: 0.5),
-                      radius: 18,
-                      child: IconButton(
-                        icon: Icon(
-                          Icons.favorite_border,
-                          size: 20,
-                          color: AppColors.error.withValues(alpha: 0.8),
+                        backgroundColor: Colors.white.withValues(alpha: 0.5),
+                        radius: 12,
+                        child: IconButton(
+                          padding: EdgeInsets.zero,
+                          icon: Icon(
+                            Icons.favorite_border,
+                            size: 14,
+                            color: AppColors.error.withValues(alpha: 0.8),
+                          ),
+                          onPressed: () {},
                         ),
-                        onPressed: () {},
                       ),
                     ),
-                  ),
-                  if (product.discountPercentage > 0)
-                    Positioned(
-                      top: 8,
-                      left: 8,
-                      child: Container(
-                        padding: const EdgeInsets.symmetric(
-                          horizontal: 6,
-                          vertical: 2,
-                        ),
-                        decoration: BoxDecoration(
-                          color: Colors.green[700],
-                          borderRadius: BorderRadius.circular(4),
-                        ),
-                        child: Text(
-                          "${product.discountPercentage.round()}% OFF",
-                          style: GoogleFonts.poppins(
-                            color: Colors.white,
-                            fontSize: 10,
-                            fontWeight: FontWeight.bold,
+                    if (product.discountPercentage > 0)
+                      Positioned(
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 4,
+                            vertical: 2,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Colors.green[700],
+                            borderRadius: BorderRadius.circular(4),
+                          ),
+                          child: Text(
+                            "${product.discountPercentage.round()}% OFF",
+                            style: GoogleFonts.poppins(
+                              color: Colors.white,
+                              fontSize: 8,
+                              fontWeight: FontWeight.bold,
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
-          
-          Padding(
-              padding: const EdgeInsets.all(12.0),
+
+            Padding(
+              padding: const EdgeInsets.all(8.0),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -108,6 +118,7 @@ class SearchItemCard extends ConsumerWidget {
                     product.title,
                     style: theme.textTheme.titleSmall?.copyWith(
                       fontWeight: FontWeight.w600,
+                      fontSize: 12,
                     ),
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
@@ -122,33 +133,45 @@ class SearchItemCard extends ConsumerWidget {
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: colorScheme.onSurface,
+                          fontSize: 14,
                         ),
                       ),
-                      const SizedBox(width: 8),
+                      const SizedBox(width: 4),
                       Text(
                         "\$${product.price.toStringAsFixed(2)}",
                         style: theme.textTheme.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
                           color: theme.hintColor,
+                          fontSize: 10,
                         ),
                       ),
                     ],
                   ),
 
-                  const SizedBox(height: 8),
-                  RatingRow(rating: product.rating, count: product.reviewCount, isSearchView: true,),
+                  const SizedBox(height: 4),
+                  RatingRow(
+                    rating: product.rating,
+                    count: product.reviewCount,
+                    isSearchView: true,
+                  ),
                 ],
               ),
             ),
 
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: EdgeInsets.symmetric(horizontal: 10),
               width: double.infinity,
-              height: 36,
+              height: 32,
               child: FilledButton(
                 onPressed: cartState.isLoading
                     ? null
                     : () {
+                        final isConnected = ref.read(
+                          connectivityNotifierProvider,
+                        );
+                        if (!isConnected) {
+                          return;
+                        }
                         if (userAsync.value == null) {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
@@ -163,27 +186,25 @@ class SearchItemCard extends ConsumerWidget {
                             .read(cartNotifierProvider.notifier)
                             .addItemToCart(user.id, product);
 
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                              '${product.title}${l10n.addedToCartSuffix}',
-                            ),
-                            duration: const Duration(seconds: 2),
-                          ),
+                        AlertService.showSuccess(
+                          context,
+                          '${product.title}${context.l10n.addedToCartSuffix}',
                         );
                       },
                 style: FilledButton.styleFrom(
+                  padding: EdgeInsets.zero,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
+                    borderRadius: BorderRadius.circular(6),
                   ),
                 ),
-                child: Text( cartState.isLoading
-                            ? l10n.adding
-                            : l10n.addToCart, style: GoogleFonts.inter(
-                          fontWeight: .w600,
-                          fontSize: 12,
-                          color: Colors.white
-                        ),),
+                child: Text(
+                  cartState.isLoading ? l10n.adding : l10n.addToCart,
+                  style: GoogleFonts.inter(
+                    fontWeight: .w600,
+                    fontSize: 10,
+                    color: Colors.white,
+                  ),
+                ),
               ),
             ),
 

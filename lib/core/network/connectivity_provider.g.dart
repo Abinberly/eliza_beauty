@@ -1,30 +1,30 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'product_search_provider.dart';
+part of 'connectivity_provider.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$productSearchControllerHash() =>
-    r'717f749afd9a5bde9115b2c11907eda92a2aa00a';
+String _$connectivityNotifierHash() =>
+    r'25377c6f32026da5f02f9145b838d7b1392148fb';
 
-/// See also [ProductSearchController].
-@ProviderFor(ProductSearchController)
-final productSearchControllerProvider =
-    AutoDisposeNotifierProvider<
-      ProductSearchController,
-      ProductSearchState
-    >.internal(
-      ProductSearchController.new,
-      name: r'productSearchControllerProvider',
+/// Streams the current connectivity status.
+/// Emits `true` when online, `false` when offline.
+///
+/// Copied from [ConnectivityNotifier].
+@ProviderFor(ConnectivityNotifier)
+final connectivityNotifierProvider =
+    NotifierProvider<ConnectivityNotifier, bool>.internal(
+      ConnectivityNotifier.new,
+      name: r'connectivityNotifierProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
-          : _$productSearchControllerHash,
+          : _$connectivityNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
 
-typedef _$ProductSearchController = AutoDisposeNotifier<ProductSearchState>;
+typedef _$ConnectivityNotifier = Notifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

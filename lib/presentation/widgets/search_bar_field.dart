@@ -14,6 +14,7 @@ class SearchBarField extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return TextField(
+      controller: controller,
       onChanged: onChanged,
       textInputAction: TextInputAction.search,
       decoration: InputDecoration(

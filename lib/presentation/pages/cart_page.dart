@@ -1,6 +1,6 @@
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/atoms/app_title.dart';
-import 'package:eliza_beauty/presentation/organisms/cart_list.dart';
+import 'package:eliza_beauty/presentation/widgets/app_title.dart';
+import 'package:eliza_beauty/presentation/widgets/cart_list.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:flutter/material.dart';

@@ -121,5 +121,10 @@
     "audioTitle": "مستقبل الصوت",
     "audioSubtitle": "هندسة دقيقة غامرة.",
     "newNarratives": "روايات جديدة",
-    "editorsChoice": "اختيار المحرر"
+    "editorsChoice": "اختيار المحرر",
+    "continueShopping": "مواصلة التسوق",
+    "networkErrorTitle": "لا يوجد اتصال بالإنترنت",
+    "networkErrorMessage": "يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.",
+    "networkErrorRetry": "إعادة المحاولة",
+    "networkErrorDismiss": "تجاهل"
 }

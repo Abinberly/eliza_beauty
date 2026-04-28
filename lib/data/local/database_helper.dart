@@ -18,7 +18,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 1, onCreate: _createDB);
+    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _createDB(Database db, int version) async {
@@ -39,11 +39,37 @@ class DatabaseHelper {
     ''');
 
     await db.execute('''
-CREATE TABLE settings (
-key TEXT PRIMARY KEY,
-value TEXT
-)
-''');
+      CREATE TABLE settings (
+        key TEXT PRIMARY KEY,
+        value TEXT
+      )
+    ''');
+
+    await db.execute('''
+      CREATE TABLE search_cache (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        query TEXT NOT NULL,
+        sortBy TEXT NOT NULL DEFAULT 'title',
+        orderBy TEXT NOT NULL DEFAULT 'asc',
+        productJson TEXT NOT NULL,
+        cachedAt INTEGER NOT NULL
+      )
+    ''');
+  }
+
+  Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
+    if (oldVersion < 2) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS search_cache (
+          id INTEGER PRIMARY KEY AUTOINCREMENT,
+          query TEXT NOT NULL,
+          sortBy TEXT NOT NULL DEFAULT 'title',
+          orderBy TEXT NOT NULL DEFAULT 'asc',
+          productJson TEXT NOT NULL,
+          cachedAt INTEGER NOT NULL
+        )
+      ''');
+    }
   }
 
   Future close() async {

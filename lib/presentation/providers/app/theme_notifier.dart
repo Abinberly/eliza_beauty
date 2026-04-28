@@ -1,24 +1,42 @@
+import 'dart:async';
+
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_text_styles.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ThemeNotifier extends Notifier<ThemeMode> {
-  @override
-  ThemeMode build() => ThemeMode.light;
+class ThemeNotifier extends AsyncNotifier<ThemeMode> {
 
-  void toggle() {
-    state = state == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+  @override
+  FutureOr<ThemeMode> build() async {
+    final storage = ref.watch(secureStorageHelperProvider);
+    final savedTheme = await storage.getTheme();
+
+    return (savedTheme == 'dark') ? ThemeMode.dark : ThemeMode.light;
+  }
+
+  Future<void> toggle() async {
+
+    final storage = ref.read(secureStorageHelperProvider);
+    final currentMode = state.value ?? ThemeMode.light;
+
+    final newMode = currentMode == ThemeMode.light ? ThemeMode.dark : ThemeMode.light;
+    
+    state = AsyncData(newMode);
+
+    await storage.saveTheme(theme: newMode == ThemeMode.dark ? 'dark' : 'light');
   }
 }
 
-final themeNotifierProvider = NotifierProvider<ThemeNotifier, ThemeMode>(() {
+final themeNotifierProvider = AsyncNotifierProvider<ThemeNotifier, ThemeMode>(() {
   return ThemeNotifier();
 });
 
 final themeDataProvider = Provider<ThemeData>((ref) {
-  final mode = ref.watch(themeNotifierProvider);
+  final themeAsync = ref.watch(themeNotifierProvider);
+  final mode = themeAsync.value ?? ThemeMode.light;
 
   if (mode == ThemeMode.dark) {
     return ThemeData(

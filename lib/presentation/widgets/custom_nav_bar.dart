@@ -1,7 +1,7 @@
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/molecules/nav_bar_item.dart';
-import 'package:eliza_beauty/presentation/organisms/nav_bar_painter.dart';
+import 'package:eliza_beauty/presentation/widgets/nav_bar_item.dart';
+import 'package:eliza_beauty/presentation/widgets/nav_bar_painter.dart';
 import 'package:eliza_beauty/presentation/providers/app/locale_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -54,12 +54,14 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
     final bool localeChanged =
         _lastLocale != null && _lastLocale != currentLocale;
 
-    if (widget.currentIndex != oldWidget.currentIndex || localeChanged) {
+    if (widget.currentIndex != oldWidget.currentIndex) {
       _animation = Tween<double>(
         begin: _previousIndex,
         end: widget.currentIndex.toDouble(),
       ).animate(CurvedAnimation(parent: _controller, curve: Curves.easeInOut));
       _controller.forward(from: 0);
+      _previousIndex = widget.currentIndex.toDouble();
+    } else if (localeChanged) {
       _previousIndex = widget.currentIndex.toDouble();
     }
     _lastLocale = currentLocale;
@@ -126,12 +128,17 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
             animation: _animation,
             builder: (context, child) {
               double itemWidth = width / navItems.length;
-              // Mirror position for RTL, same as NavBarPainter
               double adjustedPosition = isRtl
                   ? (navItems.length - 1 - _animation.value)
                   : _animation.value;
               double leftPosition =
                   (adjustedPosition * itemWidth) + (itemWidth / 2) - 28;
+
+              final int safeIndex =
+                  widget.currentIndex >= 0 &&
+                      widget.currentIndex < navItems.length
+                  ? widget.currentIndex
+                  : 0;
 
               return Positioned(
                 bottom: 45,
@@ -145,15 +152,15 @@ class _CustomNavBarState extends ConsumerState<CustomNavBar>
                       shape: BoxShape.circle,
                     ),
                     child: Center(
-                      child: navItems[widget.currentIndex]['imageUrl'] != null
+                      child: navItems[safeIndex]['imageUrl'] != null
                           ? CircleAvatar(
                               radius: 14,
                               backgroundImage: NetworkImage(
-                                navItems[widget.currentIndex]['imageUrl'],
+                                navItems[safeIndex]['imageUrl'],
                               ),
                             )
                           : Icon(
-                              navItems[widget.currentIndex]['icon'],
+                              navItems[safeIndex]['icon'],
                               color: Colors.white,
                               size: 28,
                             ),

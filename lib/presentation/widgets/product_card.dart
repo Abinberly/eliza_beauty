@@ -1,7 +1,10 @@
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
+import 'package:eliza_beauty/presentation/widgets/app_network_image.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
+import 'package:eliza_beauty/core/utils/alert_service.dart';
 import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/molecules/rating_row.dart';
+import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
 import 'package:flutter/material.dart';
@@ -52,8 +55,8 @@ class ProductCard extends ConsumerWidget {
                     borderRadius: const BorderRadius.vertical(
                       top: Radius.circular(24),
                     ),
-                    child: Image.network(
-                      product.thumbnail,
+                    child: AppNetworkImage(
+                      imageUrl: product.thumbnail,
                       height: 180,
                       width: double.infinity,
                       fit: BoxFit.cover,
@@ -154,6 +157,12 @@ class ProductCard extends ConsumerWidget {
                       onPressed: cartState.isLoading
                           ? null
                           : () {
+                              final isConnected = ref.read(
+                                connectivityNotifierProvider,
+                              );
+                              if (!isConnected) {
+                                return;
+                              }
                               if (userAsync.value == null) {
                                 ScaffoldMessenger.of(context).showSnackBar(
                                   SnackBar(
@@ -171,13 +180,9 @@ class ProductCard extends ConsumerWidget {
                                   .read(cartNotifierProvider.notifier)
                                   .addItemToCart(user.id, product);
 
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(
-                                    '${product.title}${context.l10n.addedToCartSuffix}',
-                                  ),
-                                  duration: const Duration(seconds: 2),
-                                ),
+                              AlertService.showSuccess(
+                                context,
+                                '${product.title}${context.l10n.addedToCartSuffix}',
                               );
                             },
                       icon: cartState.isLoading

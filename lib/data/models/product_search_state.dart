@@ -10,7 +10,7 @@ class ProductSearchState with _$ProductSearchState {
     @Default([]) List<ProductModel> products,
     @Default('') String query,
     @Default(0) int skip,
-    @Default(20) int limit,
+    @Default(10) int limit,
     @Default(0) int total,
     @Default(false) bool isLoading,
     @Default(false) bool isLoadMore,

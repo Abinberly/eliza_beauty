@@ -12,6 +12,8 @@ class LocalCacheRepository {
 
   LocalCacheRepository(this._dbHelper);
 
+  // ── Categories ──────────────────────────────────────────
+
   Future<void> cacheCategories(List<CategoryModel> categories) async {
     final db = await _dbHelper.database;
     final batch = db.batch();
@@ -31,6 +33,8 @@ class LocalCacheRepository {
     final result = await db.query('categories');
     return result.map((json) => CategoryModel.fromJson(json)).toList();
   }
+
+  // ── Products by Category ────────────────────────────────
 
   Future<void> cacheProducts(String categorySlug, List<ProductModel> products) async {
     final db = await _dbHelper.database;
@@ -62,6 +66,65 @@ class LocalCacheRepository {
       final jsonStr = row['productJson'] as String;
       return ProductModel.fromJson(jsonDecode(jsonStr));
     }).toList();
+  }
+
+  // ── Search Results ──────────────────────────────────────
+
+  Future<void> cacheSearchResults({
+    required String query,
+    required String sortBy,
+    required String order,
+    required List<ProductModel> products,
+  }) async {
+    final db = await _dbHelper.database;
+
+    // Clear old cache for this query+sort combo
+    await db.delete(
+      'search_cache',
+      where: 'query = ? AND sortBy = ? AND orderBy = ?',
+      whereArgs: [query, sortBy, order],
+    );
+
+    final batch = db.batch();
+    final now = DateTime.now().millisecondsSinceEpoch;
+
+    for (var prod in products) {
+      batch.insert('search_cache', {
+        'query': query,
+        'sortBy': sortBy,
+        'orderBy': order,
+        'productJson': jsonEncode(prod.toJson()),
+        'cachedAt': now,
+      });
+    }
+
+    await batch.commit(noResult: true);
+  }
+
+  Future<List<ProductModel>> getCachedSearchResults({
+    required String query,
+    required String sortBy,
+    required String order,
+  }) async {
+    final db = await _dbHelper.database;
+    final result = await db.query(
+      'search_cache',
+      where: 'query = ? AND sortBy = ? AND orderBy = ?',
+      whereArgs: [query, sortBy, order],
+      orderBy: 'id ASC',
+    );
+
+    return result.map((row) {
+      final jsonStr = row['productJson'] as String;
+      return ProductModel.fromJson(jsonDecode(jsonStr));
+    }).toList();
+  }
+
+  /// Clears search cache older than 24 hours.
+  Future<void> clearStaleSearchCache() async {
+    final db = await _dbHelper.database;
+    final cutoff = DateTime.now().subtract(const Duration(hours: 24)).millisecondsSinceEpoch;
+    await db.delete('search_cache', where: 'cachedAt < ?', whereArgs: [cutoff]);
   }
 }
 

@@ -2,11 +2,13 @@ import 'package:eliza_beauty/core/router/app_routes.dart';
 import 'package:eliza_beauty/core/theme/app_colors.dart';
 import 'package:eliza_beauty/core/theme/app_images.dart';
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/atoms/app_title.dart';
-import 'package:eliza_beauty/presentation/atoms/search_bar_field.dart';
-import 'package:eliza_beauty/presentation/molecules/search_item_card.dart';
-import 'package:eliza_beauty/presentation/molecules/search_card_shimmer.dart';
-import 'package:eliza_beauty/presentation/molecules/sort_filter_bar.dart';
+import 'package:eliza_beauty/core/network/connectivity_provider.dart';
+import 'package:eliza_beauty/presentation/widgets/app_title.dart';
+import 'package:eliza_beauty/presentation/widgets/search_bar_field.dart';
+import 'package:eliza_beauty/presentation/widgets/search_item_card.dart';
+import 'package:eliza_beauty/presentation/widgets/search_card_shimmer.dart';
+import 'package:eliza_beauty/presentation/widgets/sort_filter_bar.dart';
+import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
 import 'package:eliza_beauty/presentation/providers/shop/product_search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -34,7 +36,24 @@ class SearchProductPage extends HookConsumerWidget {
         ),
         actions: [
           IconButton(
-            onPressed: () => context.push(AppRoutes.cart),
+            onPressed: () {
+              final isConnected = ref.read(connectivityNotifierProvider);
+              if (!isConnected) {
+                NetworkErrorDialog.show(
+                  context,
+                  onRetry: () async {
+                    await ref.read(connectivityNotifierProvider.notifier).refresh();
+                    if (!ref.context.mounted) return;
+                    
+                    if (ref.read(connectivityNotifierProvider)) {
+                      context.push(AppRoutes.cart);
+                    }
+                  },
+                );
+              } else {
+                context.push(AppRoutes.cart);
+              }
+            },
             icon: Image.asset(AppImages.bagIcon),
           ),
           SizedBox(width: 20),
@@ -77,9 +96,10 @@ class SearchProductPage extends HookConsumerWidget {
                                       Icon(
                                         Icons.search_off,
                                         size: 64,
-                                        color: AppColors.appTitle.withValues(
-                                          alpha: 0.5,
-                                        ),
+                                        color: context.colorScheme.onSurface.withValues(alpha: 0.4),
+                                        // color: AppColors.appTitle.withValues(
+                                        //   alpha: 0.5,
+                                        // ),
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
@@ -87,9 +107,10 @@ class SearchProductPage extends HookConsumerWidget {
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
                                           fontSize: 16,
-                                          color: AppColors.appTitle.withValues(
-                                            alpha: 0.5,
-                                          ),
+                                          color: context.colorScheme.onSurface.withValues(alpha: 0.4),
+                                          // color: AppColors.appTitle.withValues(
+                                          //   alpha: 0.5,
+                                          // ),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -119,19 +140,29 @@ class SearchProductPage extends HookConsumerWidget {
                               ),
 
                               if (state.isLoadMore)
-                                const SliverToBoxAdapter(
-                                  child: Padding(
-                                    padding: EdgeInsets.symmetric(vertical: 24),
-                                    child: Center(
-                                      child: CircularProgressIndicator(),
-                                    ),
+                                SliverPadding(
+                                  padding: const EdgeInsets.all(16.0),
+                                  sliver: SliverGrid(
+                                    gridDelegate:
+                                        const SliverGridDelegateWithFixedCrossAxisCount(
+                                          crossAxisCount: 2,
+                                          mainAxisSpacing: 10,
+                                          crossAxisSpacing: 10,
+                                          childAspectRatio: 0.62,
+                                        ),
+                                    delegate: SliverChildBuilderDelegate((
+                                      context,
+                                      index,
+                                    ) {
+                                      return const SearchCardShimmer();
+                                    }, childCount: 10),
                                   ),
                                 ),
-                            ],
 
-                            const SliverToBoxAdapter(
-                              child: SizedBox(height: 80),
-                            ),
+                              const SliverToBoxAdapter(
+                                child: SizedBox(height: 80),
+                              ),
+                            ],
                           ],
                         ),
                       ),

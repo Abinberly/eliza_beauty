@@ -1,5 +1,6 @@
 import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:eliza_beauty/domain/entities/cart_item.dart';
+import 'package:eliza_beauty/presentation/widgets/app_network_image.dart';
 import 'package:flutter/material.dart';
 
 class CartItemCard extends StatelessWidget {
@@ -41,11 +42,9 @@ class CartItemCard extends StatelessWidget {
             ),
             child: AspectRatio(
               aspectRatio: 16 / 9,
-              child: Image.network(
-                product.thumbnail,
+              child: AppNetworkImage(
+                imageUrl: product.thumbnail,
                 fit: BoxFit.cover,
-                errorBuilder: (context, error, stackTrace) =>
-                    Container(color: Colors.grey[200]),
               ),
             ),
           ),

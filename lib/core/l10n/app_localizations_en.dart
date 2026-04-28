@@ -403,4 +403,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editorsChoice => 'EDITOR\'S CHOICE';
+
+  @override
+  String get continueShopping => 'Continue Shopping';
+
+  @override
+  String get networkErrorTitle => 'No Internet Connection';
+
+  @override
+  String get networkErrorMessage =>
+      'Please check your internet connection and try again.';
+
+  @override
+  String get networkErrorRetry => 'Retry';
+
+  @override
+  String get networkErrorDismiss => 'Dismiss';
 }

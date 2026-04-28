@@ -1,6 +1,6 @@
 import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/atoms/shimmer_box.dart';
-import 'package:eliza_beauty/presentation/molecules/cart_item_card.dart';
+import 'package:eliza_beauty/presentation/widgets/shimmer_box.dart';
+import 'package:eliza_beauty/presentation/widgets/cart_item_card.dart';
 import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';

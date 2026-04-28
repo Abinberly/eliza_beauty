@@ -1,8 +1,8 @@
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
+import 'package:eliza_beauty/domain/repository/storage_repository.dart';
 import 'package:eliza_beauty/core/router/app_routes.dart';
 
 class InitializationUseCase {
-  final SecureStorageHelper _storage;
+  final StorageRepository _storage;
 
   InitializationUseCase(this._storage);
 

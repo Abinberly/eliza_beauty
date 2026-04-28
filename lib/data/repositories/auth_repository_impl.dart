@@ -2,8 +2,9 @@ import 'dart:convert';
 import 'package:eliza_beauty/data/models/user_model.dart';
 import 'package:eliza_beauty/domain/entities/user.dart';
 import 'package:eliza_beauty/domain/repository/auth_repository.dart';
+import 'package:eliza_beauty/domain/use_case/login_usecase.dart';
 import 'package:eliza_beauty/data/sources/auth_api_service.dart';
-import 'package:eliza_beauty/presentation/providers/app/api_providers.dart';
+import 'package:eliza_beauty/core/network/chopper_client.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -71,6 +72,11 @@ class AuthRepositoryImpl implements AuthRepository {
 
 @riverpod
 AuthRepository authRepository(Ref ref) {
-  final apiService = ref.watch(authApiProvider);
+  final apiService = ref.watch(authApiServiceProvider);
   return AuthRepositoryImpl(apiService);
+}
+
+@riverpod
+LoginUsecase loginUsecase(Ref ref) {
+  return LoginUsecase(ref.watch(authRepositoryProvider));
 }

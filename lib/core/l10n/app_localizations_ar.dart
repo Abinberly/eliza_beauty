@@ -406,4 +406,20 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get editorsChoice => 'اختيار المحرر';
+
+  @override
+  String get continueShopping => 'مواصلة التسوق';
+
+  @override
+  String get networkErrorTitle => 'لا يوجد اتصال بالإنترنت';
+
+  @override
+  String get networkErrorMessage =>
+      'يرجى التحقق من اتصالك بالإنترنت والمحاولة مرة أخرى.';
+
+  @override
+  String get networkErrorRetry => 'إعادة المحاولة';
+
+  @override
+  String get networkErrorDismiss => 'تجاهل';
 }
