@@ -1,8 +1,8 @@
-import 'package:eliza_beauty/core/l10n/app_localizations.dart';
-import 'package:eliza_beauty/core/router/app_router.dart';
-import 'package:eliza_beauty/presentation/providers/app/locale_provider.dart';
-import 'package:eliza_beauty/presentation/providers/app/theme_notifier.dart';
-import 'package:eliza_beauty/presentation/widgets/network_connectivity_monitor.dart';
+import 'core/l10n/app_localizations.dart';
+import 'core/router/app_router.dart';
+import 'presentation/providers/app/locale_provider.dart';
+import 'presentation/providers/app/theme_notifier.dart';
+import 'presentation/components/common/network_connectivity_monitor.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,8 +62,8 @@ class _InitializationLoadingWidget extends StatelessWidget {
 }
 
 class _InitializationErrorWidget extends StatelessWidget {
-  final Object error;
   const _InitializationErrorWidget({required this.error});
+  final Object error;
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

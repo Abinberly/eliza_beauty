@@ -1,17 +1,16 @@
 import 'dart:developer';
-
-import 'package:eliza_beauty/core/network/chopper_client.dart';
-import 'package:eliza_beauty/core/network/network_info.dart';
-import 'package:eliza_beauty/data/models/category_model.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/data/repositories/local_cache_repository.dart';
-import 'package:eliza_beauty/data/sources/product_api_service.dart';
+import '../../../core/network/chopper_client.dart';
+import '../../../core/network/network_info.dart';
+import '../../../data/models/category_model.dart';
+import '../../../data/models/product_model.dart';
+import '../../../data/repositories/local_cache_repository.dart';
+import '../../../data/sources/product_api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'shop_providers.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<List<CategoryModel>> categories(Ref ref) async {
   final client = ref.watch(chopperClientProvider);
   final service = client.getService<ProductApiService>();
@@ -49,25 +48,25 @@ Future<List<CategoryModel>> categories(Ref ref) async {
     log('Failed to load cached categories: $e', name: 'ShopProviders');
   }
 
-  throw Exception("Failed to fetch categories and no local cache available");
+  throw Exception('Failed to fetch categories and no local cache available');
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SelectedCategory extends _$SelectedCategory {
   @override
   String build() {
     final categoriesAsync = ref.watch(categoriesProvider);
 
     return categoriesAsync.maybeWhen(
-      data: (list) => list.isNotEmpty ? list.first.slug : "",
-      orElse: () => "",
+      data: (list) => list.isNotEmpty ? list.first.slug : '',
+      orElse: () => '',
     );
   }
 
   void select(String slug) => state = slug;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ProductsByCategory extends _$ProductsByCategory {
   int _skip = 0;
   final int _limit = 16;

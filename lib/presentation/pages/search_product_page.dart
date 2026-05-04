@@ -1,20 +1,20 @@
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/core/network/connectivity_provider.dart';
-import 'package:eliza_beauty/presentation/widgets/app_title.dart';
-import 'package:eliza_beauty/presentation/widgets/search_bar_field.dart';
-import 'package:eliza_beauty/presentation/widgets/search_item_card.dart';
-import 'package:eliza_beauty/presentation/widgets/search_card_shimmer.dart';
-import 'package:eliza_beauty/presentation/widgets/sort_filter_bar.dart';
-import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
-import 'package:eliza_beauty/presentation/providers/shop/product_search_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import '../../core/network/connectivity_provider.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_images.dart';
+import '../../core/theme/app_theme.dart';
+import '../features/search/search_card_shimmer.dart';
+import '../features/search/search_skeleton.dart';
+import '../providers/shop/product_search_provider.dart';
+import '../components/common/app_title.dart';
+import '../components/overlays/network_error_dialog.dart';
+import '../features/search/search_bar_field.dart';
+import '../features/search/search_item_card.dart';
+import '../components/common/sort_filter_bar.dart';
 
 class SearchProductPage extends HookConsumerWidget {
   const SearchProductPage({super.key});
@@ -42,9 +42,11 @@ class SearchProductPage extends HookConsumerWidget {
                 NetworkErrorDialog.show(
                   context,
                   onRetry: () async {
-                    await ref.read(connectivityNotifierProvider.notifier).refresh();
+                    await ref
+                        .read(connectivityNotifierProvider.notifier)
+                        .refresh();
                     if (!ref.context.mounted) return;
-                    
+
                     if (ref.read(connectivityNotifierProvider)) {
                       context.push(AppRoutes.cart);
                     }
@@ -56,7 +58,7 @@ class SearchProductPage extends HookConsumerWidget {
             },
             icon: Image.asset(AppImages.bagIcon),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
         ],
       ),
       body: Padding(
@@ -80,7 +82,7 @@ class SearchProductPage extends HookConsumerWidget {
                   return false;
                 },
                 child: state.isLoading
-                    ? const SearchGridShimmer()
+                    ? const SearchResultsGridSkeleton(itemCount: 6)
                     : RefreshIndicator(
                         onRefresh: () => notifier.fetchProducts(),
                         child: CustomScrollView(
@@ -96,10 +98,8 @@ class SearchProductPage extends HookConsumerWidget {
                                       Icon(
                                         Icons.search_off,
                                         size: 64,
-                                        color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-                                        // color: AppColors.appTitle.withValues(
-                                        //   alpha: 0.5,
-                                        // ),
+                                        color: context.colorScheme.onSurface
+                                            .withValues(alpha: 0.4),
                                       ),
                                       const SizedBox(height: 16),
                                       Text(
@@ -107,10 +107,8 @@ class SearchProductPage extends HookConsumerWidget {
                                         textAlign: TextAlign.center,
                                         style: GoogleFonts.poppins(
                                           fontSize: 16,
-                                          color: context.colorScheme.onSurface.withValues(alpha: 0.4),
-                                          // color: AppColors.appTitle.withValues(
-                                          //   alpha: 0.5,
-                                          // ),
+                                          color: context.colorScheme.onSurface
+                                              .withValues(alpha: 0.4),
                                           fontWeight: FontWeight.w500,
                                         ),
                                       ),
@@ -123,19 +121,27 @@ class SearchProductPage extends HookConsumerWidget {
                                 padding: const EdgeInsets.all(16.0),
                                 sliver: SliverGrid(
                                   gridDelegate:
-                                      SliverGridDelegateWithFixedCrossAxisCount(
+                                      const SliverGridDelegateWithFixedCrossAxisCount(
                                         crossAxisCount: 2,
                                         mainAxisSpacing: 10,
                                         crossAxisSpacing: 10,
                                         childAspectRatio: 0.62,
                                       ),
-                                  delegate: SliverChildBuilderDelegate((
-                                    context,
-                                    index,
-                                  ) {
-                                    final product = state.products[index];
-                                    return SearchItemCard(product: product);
-                                  }, childCount: state.products.length),
+                                  delegate: SliverChildBuilderDelegate(
+                                    (context, index) {
+                                      final product = state.products[index];
+                                      return SearchItemCard(
+                                        key: ValueKey(
+                                          'search_item_${product.id}',
+                                        ),
+                                        product: product,
+                                      );
+                                    },
+                                    childCount: state.products.length,
+                                    addAutomaticKeepAlives: true,
+                                    addRepaintBoundaries: true,
+                                    addSemanticIndexes: true,
+                                  ),
                                 ),
                               ),
 
@@ -150,12 +156,14 @@ class SearchProductPage extends HookConsumerWidget {
                                           crossAxisSpacing: 10,
                                           childAspectRatio: 0.62,
                                         ),
-                                    delegate: SliverChildBuilderDelegate((
-                                      context,
-                                      index,
-                                    ) {
-                                      return const SearchCardShimmer();
-                                    }, childCount: 10),
+                                    delegate: SliverChildBuilderDelegate(
+                                      (context, index) =>
+                                          const SearchCardShimmer(),
+                                      childCount: 10,
+                                      addAutomaticKeepAlives: false,
+                                      addRepaintBoundaries: true,
+                                      addSemanticIndexes: false,
+                                    ),
                                   ),
                                 ),
 

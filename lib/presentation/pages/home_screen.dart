@@ -1,18 +1,16 @@
-import 'package:eliza_beauty/core/network/connectivity_provider.dart';
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/widgets/app_title.dart';
-import 'package:eliza_beauty/presentation/widgets/carousel_shimmer.dart';
-import 'package:eliza_beauty/presentation/widgets/category_list_bar.dart';
-import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
-import 'package:eliza_beauty/presentation/widgets/product_card_shimmer.dart';
-import 'package:eliza_beauty/presentation/widgets/feature_carousel.dart';
-import 'package:eliza_beauty/presentation/widgets/product_grid.dart';
-import 'package:eliza_beauty/presentation/providers/shop/shop_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_images.dart';
+import '../../core/theme/app_theme.dart';
+import '../features/product/product_card_shimmer.dart';
+import '../providers/shop/shop_providers.dart';
+import '../components/common/app_title.dart';
+import '../components/common/indicators/carousel_shimmer.dart';
+import '../components/common/category_list_bar.dart';
+import '../components/common/feature_carousel.dart';
+import '../features/product/product_grid.dart';
 
 class HomeScreen extends ConsumerStatefulWidget {
   const HomeScreen({super.key});
@@ -58,29 +56,11 @@ class _HomePageState extends ConsumerState<HomeScreen> {
         actions: [
           IconButton(
             onPressed: () {
-              final isConnected = ref.read(connectivityNotifierProvider);
-
-              if (!isConnected) {
-                NetworkErrorDialog.show(
-                  context,
-                  onRetry: () async {
-                    await ref
-                        .read(connectivityNotifierProvider.notifier)
-                        .refresh();
-                    if (!ref.context.mounted) return;
-
-                    if (ref.read(connectivityNotifierProvider)) {
-                      context.push(AppRoutes.cart);
-                    }
-                  },
-                );
-              } else {
-                context.push(AppRoutes.cart);
-              }
+              context.push(AppRoutes.cart);
             },
             icon: Image.asset(AppImages.bagIcon),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
         ],
       ),
       body: _buildBody(),
@@ -99,19 +79,19 @@ class _HomePageState extends ConsumerState<HomeScreen> {
             !productsAsync.hasError);
 
     if (isInitialLoading) {
-      return CustomScrollView(
+      return const CustomScrollView(
         slivers: [
           SliverToBoxAdapter(
             child: Column(
               children: [
-                const SizedBox(height: 20),
-                const CarouselShimmer(),
-                const SizedBox(height: 20),
+                SizedBox(height: 20),
+                CarouselShimmer(),
+                SizedBox(height: 20),
               ],
             ),
           ),
-          const SliverProductListShimmer(count: 3),
-          const SliverToBoxAdapter(child: SizedBox(height: 80)),
+          SliverProductListShimmer(count: 3),
+          SliverToBoxAdapter(child: SizedBox(height: 80)),
         ],
       );
     }
@@ -145,9 +125,9 @@ class _HomePageState extends ConsumerState<HomeScreen> {
         children: [
           Text(
             context.l10n.categories,
-            style: TextStyle(fontSize: 20, fontWeight: .w600),
+            style: const TextStyle(fontSize: 20, fontWeight: .w600),
           ),
-          Spacer(),
+          const Spacer(),
         ],
       ),
     );

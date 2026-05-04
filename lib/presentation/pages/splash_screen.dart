@@ -1,7 +1,7 @@
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/presentation/widgets/gradient_progress_bar.dart';
-import 'package:eliza_beauty/presentation/widgets/splash_content.dart';
-import 'package:eliza_beauty/presentation/providers/app/splash_provider.dart';
+import '../../core/theme/app_images.dart';
+import '../components/common/indicators/gradient_progress_bar.dart';
+import '../components/common/splash_content.dart';
+import '../providers/app/splash_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -34,14 +34,14 @@ class SplashScreen extends ConsumerWidget {
                   Image.asset(AppImages.appLogo),
 
                   /// App Title & App Tagline
-                  SplashContent(),
+                  const SplashContent(),
 
                   Image.asset(AppImages.splashItemImage),
                 ],
               ),
 
               /// Progress bar
-              Positioned(
+              const Positioned(
                 left: 24,
                 right: 24,
                 bottom: 0,

@@ -1,8 +1,10 @@
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/widgets/app_title.dart';
-import 'package:eliza_beauty/presentation/widgets/cart_list.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
+import '../../core/network/connectivity_provider.dart';
+import '../../core/theme/app_theme.dart';
+import '../components/common/app_title.dart';
+import '../features/cart/cart_list.dart';
+import '../../core/theme/app_colors.dart';
+import '../providers/cart/cart_provider.dart';
+import '../components/common/error_view.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -15,8 +17,22 @@ class CartPage extends ConsumerStatefulWidget {
 }
 
 class _CartPageState extends ConsumerState<CartPage> {
+  
+  Future<void> _refreshCart() async {
+    return ref.refresh(cartNotifierProvider.future);
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Connectivity changes Listening
+    ref.listen<bool>(connectivityNotifierProvider, (previous, isConnected) {
+      if (previous == false && isConnected == true) {
+        _refreshCart();
+      }
+    });
+
+    final cartState = ref.watch(cartNotifierProvider);
+
     return Scaffold(
       appBar: AppBar(
         centerTitle: false,
@@ -27,7 +43,17 @@ class _CartPageState extends ConsumerState<CartPage> {
         ),
       ),
 
-      body: CartList(),
+      body: RefreshIndicator(onRefresh: _refreshCart, child: cartState.when(
+          data: (carts) => const CartList(),
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, stack) => ErrorView(
+            message: error.toString().contains('timed out') 
+                ? context.l10n.connectionTimeout 
+                : context.l10n.somethingWentWrong,
+            onRetry: _refreshCart,
+          ),
+        ),
+      ),
       bottomNavigationBar: _buildBottomCheckout(context, ref),
     );
   }

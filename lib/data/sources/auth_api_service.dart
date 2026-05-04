@@ -1,5 +1,5 @@
 import 'package:chopper/chopper.dart';
-import 'package:eliza_beauty/core/constants/api_endpoints.dart';
+import '../../core/constants/api_endpoints.dart';
 
 part 'auth_api_service.chopper.dart';
 

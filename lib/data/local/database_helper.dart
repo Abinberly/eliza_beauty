@@ -1,12 +1,13 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'wishlist_database.dart';
 
 class DatabaseHelper {
+
+  DatabaseHelper._init();
   static final DatabaseHelper instance = DatabaseHelper._init();
 
   static Database? _database;
-
-  DatabaseHelper._init();
 
   Future<Database> get database async {
     if (_database != null) return _database!;
@@ -18,7 +19,7 @@ class DatabaseHelper {
     final dbPath = await getDatabasesPath();
     final path = join(dbPath, filePath);
 
-    return await openDatabase(path, version: 2, onCreate: _createDB, onUpgrade: _upgradeDB);
+    return await openDatabase(path, version: 4, onCreate: _createDB, onUpgrade: _upgradeDB);
   }
 
   Future _createDB(Database db, int version) async {
@@ -55,6 +56,22 @@ class DatabaseHelper {
         cachedAt INTEGER NOT NULL
       )
     ''');
+
+    await db.execute('''
+      CREATE TABLE offline_operations (
+        id TEXT PRIMARY KEY,
+        operationType TEXT NOT NULL,
+        data TEXT NOT NULL,
+        createdAt TEXT NOT NULL,
+        retryCount INTEGER NOT NULL DEFAULT 0,
+        lastRetryAt TEXT,
+        executedAt TEXT,
+        status TEXT NOT NULL DEFAULT 'pending'
+      )
+    ''');
+
+    // Create wishlist table
+    await WishlistDatabase.onCreate(db);
   }
 
   Future _upgradeDB(Database db, int oldVersion, int newVersion) async {
@@ -69,6 +86,25 @@ class DatabaseHelper {
           cachedAt INTEGER NOT NULL
         )
       ''');
+    }
+    
+    if (oldVersion < 3) {
+      await db.execute('''
+        CREATE TABLE IF NOT EXISTS offline_operations (
+          id TEXT PRIMARY KEY,
+          operationType TEXT NOT NULL,
+          data TEXT NOT NULL,
+          createdAt TEXT NOT NULL,
+          retryCount INTEGER NOT NULL DEFAULT 0,
+          lastRetryAt TEXT,
+          executedAt TEXT,
+          status TEXT NOT NULL DEFAULT 'pending'
+        )
+      ''');
+    }
+    
+    if (oldVersion < 4) {
+      await WishlistDatabase.onUpgrade(db, oldVersion, newVersion);
     }
   }
 

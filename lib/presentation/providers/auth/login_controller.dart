@@ -1,13 +1,13 @@
 import 'dart:convert';
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
-import 'package:eliza_beauty/data/models/user_model.dart';
-import 'package:eliza_beauty/data/repositories/auth_repository_impl.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../../data/local/secure_storage_helper.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
+import 'user_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_controller.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class LoginController extends _$LoginController {
   @override
   FutureOr<bool?> build() => null;

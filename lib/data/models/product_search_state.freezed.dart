@@ -232,7 +232,7 @@ class _$ProductSearchStateImpl extends _ProductSearchState {
     final List<ProductModel> products = const [],
     this.query = '',
     this.skip = 0,
-    this.limit = 20,
+    this.limit = 10,
     this.total = 0,
     this.isLoading = false,
     this.isLoadMore = false,

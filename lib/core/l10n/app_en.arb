@@ -18,6 +18,15 @@
     "addToCart": "Add to Cart",
     "prdDetails": "Product Details",
     "home": "Home",
+    "wishlist": "Wishlist",
+    "loginToAddToWishlist": "Please login to add items to wishlist",
+    "addedToWishlist": "added to wishlist",
+    "wishlistEmpty": "Your wishlist is empty",
+    "wishlistEmptyDesc": "Start adding items you love to see them here",
+    "clearWishlist": "Clear Wishlist",
+    "clearWishlistConfirm": "Are you sure you want to remove all items from your wishlist?",
+    "wishlistCleared": "Wishlist cleared",
+    "searchWishlist": "Search wishlist...",
     "search": "Search",
     "cart": "Cart",
     "account": "Account",
@@ -126,5 +135,51 @@
     "networkErrorTitle": "No Internet Connection",
     "networkErrorMessage": "Please check your internet connection and try again.",
     "networkErrorRetry": "Retry",
-    "networkErrorDismiss": "Dismiss"
+    "networkErrorDismiss": "Dismiss",
+    "connectionTimeout": "Connection timed out. Please try again.",
+    "somethingWentWrong": "Something went wrong",
+    "errorNetworkNoConnection": "No internet connection. Please check your network settings.",
+    "errorNetworkTimeout": "Connection timeout. Please try again.",
+    "errorNetworkGeneral": "Network error occurred. Please check your connection and try again.",
+    "errorServerUnavailable": "Server is temporarily unavailable. Please try again later.",
+    "errorAuthFailed": "Authentication failed. Please log in again.",
+    "errorValidation": "Invalid data provided. Please check your input.",
+    "errorUnknown": "An unexpected error occurred. Please try again.",
+    "errorRetryAttempt": "Retry attempt {attempt} of {maxAttempts}",
+    "errorRetryExhausted": "All retry attempts exhausted. Please try again later.",
+    "errorOfflineMode": "Working in offline mode. Some features may be limited.",
+    "errorRetryIn": "Retrying in {seconds} seconds...",
+    "errorLastSync": "Last sync: {time}",
+    "errorRecoveringConnection": "Recovering connection...",
+    "errorOperationFailed": "Operation failed. {message}",
+    "errorDataCorrupted": "Data may be corrupted. Please refresh.",
+    "errorCacheCleared": "Cache cleared successfully.",
+    "errorRetryWithBackoff": "Automatic retry with exponential backoff enabled.",
+    "pleaseLoginToViewWishlist": "Please login to view your wishlist",
+    "noItemsFoundWishlist": "No items found",
+    "errorPrefixWish": "Error: {error}",
+    "@errorPrefixWish": {
+    "placeholders": {
+      "error": {
+        "type": "String"
+        }
+        }
+    },
+    "wishlistEmptyHeadline": "Your wishlist is empty",
+    "wishlistEmptySubline": "Start adding items you love to see them here",
+    "clear": "Clear",
+    "undo": "Undo",
+    "removedFromWishlist": "{productName} removed from wishlist",
+    "@removedFromWishlist": {
+    "placeholders": {
+      "productName": {
+        "type": "String"
+        }
+        }
+    },
+    "addedDaysAgo": "Added {days}d ago",
+    "addedHoursAgo": "Added {hours}h ago",
+    "addedMinutesAgo": "Added {minutes}m ago",
+    "addedJustNow": "Added Just now",
+    "removeTooltip": "Remove from wishlist"
 }

@@ -1,6 +1,6 @@
 class ApiEndpoints {
   // Base URL
-  static const String baseUrl = "https://dummyjson.com";
+  static const String baseUrl = 'https://dummyjson.com';
 
   // Auth Endpoints
   static const String authBase = '/auth';

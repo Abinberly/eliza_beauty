@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:eliza_beauty/core/network/network_info.dart';
+import 'network_info.dart';
 
 part 'connectivity_provider.g.dart';
 
@@ -15,14 +15,16 @@ class ConnectivityNotifier extends _$ConnectivityNotifier {
   bool build() {
     _connectivity = Connectivity();
 
-    _subscription = _connectivity.onConnectivityChanged.listen((results) async {
+    _subscription = _connectivity.onConnectivityChanged.listen((results) {
       final hasBasicConnectivity = _hasBasicConnectivity(results);
       
       if (hasBasicConnectivity) {
-        final hasInternetAccess = await _checkInternetAccess();
-        if (state != hasInternetAccess) {
-          state = hasInternetAccess;
+        // Set state to true immediately for responsiveness, then verify internet access
+        if (state != true) {
+          state = true;
         }
+        // Verify actual internet access asynchronously
+        _verifyInternetAccess();
       } else {
         if (state != false) {
           state = false;
@@ -87,9 +89,25 @@ class ConnectivityNotifier extends _$ConnectivityNotifier {
     }
   }
 
+  Future<void> _verifyInternetAccess() async {
+    try {
+      final hasInternetAccess = await _checkInternetAccess();
+      // Only update state if internet access check fails (to correct false positive)
+      if (!hasInternetAccess && state == true) {
+        state = false;
+      }
+    } catch (e) {
+      // If check fails, assume offline
+      if (state == true) {
+        state = false;
+      }
+    }
+  }
+
   void _startPeriodicCheck() {
     _periodicCheckTimer = Timer.periodic(const Duration(seconds: 3), (timer) async {
       if (!state) {
+        // Only check if currently offline to detect restoration
         final hasInternetAccess = await _checkInternetAccess();
         if (hasInternetAccess && state != hasInternetAccess) {
           state = hasInternetAccess;

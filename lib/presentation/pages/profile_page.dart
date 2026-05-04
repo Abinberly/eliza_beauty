@@ -1,19 +1,23 @@
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/domain/entities/user.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/data/local/language_local_service.dart';
-import 'package:eliza_beauty/presentation/widgets/settings_tile.dart';
-import 'package:eliza_beauty/presentation/widgets/settings_group.dart';
-import 'package:eliza_beauty/presentation/providers/app/locale_provider.dart';
-import 'package:eliza_beauty/presentation/providers/auth/login_controller.dart';
-import 'package:eliza_beauty/presentation/providers/app/theme_notifier.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../core/network/connectivity_provider.dart';
+import '../../core/router/app_routes.dart';
+import '../../domain/entities/user.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_images.dart';
+import '../../core/theme/app_theme.dart';
+import 'package:cached_network_image/cached_network_image.dart';
+import '../../data/local/language_local_service.dart';
+import '../components/overlays/network_error_dialog.dart';
+import '../features/profile/settings_tile.dart';
+import '../features/profile/settings_group.dart';
+import '../providers/app/locale_provider.dart';
+import '../providers/auth/login_controller.dart';
+import '../providers/app/theme_notifier.dart';
+import '../providers/auth/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
+import '../../core/utils/dialog_service.dart';
 
 class ProfilePage extends ConsumerWidget {
   const ProfilePage({super.key});
@@ -29,212 +33,278 @@ class ProfilePage extends ConsumerWidget {
         });
       }
     });
+
+    ref.listen(connectivityNotifierProvider, (previous, next) {
+      if (previous == false && next == true) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          if (context.mounted) {
+            ref.invalidate(liveUserProfileProvider);
+          }
+        });
+      }
+    });
+
     final theme = Theme.of(context);
     final liveUserAsync = ref.watch(liveUserProfileProvider);
     final l10n = context.l10n;
 
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: liveUserAsync.when(
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) {
-          // Offline fallback — use cached profile
-          final cachedUser = ref.read(userProfileProvider).value;
-          if (cachedUser != null) {
-            return _buildProfileContent(context, ref, cachedUser, theme, l10n);
+      body: RefreshIndicator(
+        onRefresh: () async {
+          final isConnected = ref.read(connectivityNotifierProvider);
+          if (!isConnected) {
+            NetworkErrorDialog.show(
+              context,
+              onRetry: () async {
+                await ref
+                    .read(connectivityNotifierProvider.notifier)
+                    .refresh();
+                if (!ref.context.mounted) return;
+
+                if (ref.read(connectivityNotifierProvider)) {
+                  ref.invalidate(liveUserProfileProvider);
+                }
+              },
+            );
+          } else {
+            ref.invalidate(liveUserProfileProvider);
           }
-          return Center(child: Text('${l10n.errorPrefix} $e'));
         },
-        data: (user) {
-          if (user == null) {
-            // Fallback to cached
+        child: liveUserAsync.when(
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (e, _) {
             final cachedUser = ref.read(userProfileProvider).value;
             if (cachedUser != null) {
               return _buildProfileContent(context, ref, cachedUser, theme, l10n);
             }
-            return Center(child: Text(l10n.errorPrefix));
-          }
-          return _buildProfileContent(context, ref, user, theme, l10n);
-        },
+            return Center(child: Text('${l10n.errorPrefix} $e'));
+          },
+          data: (user) {
+            if (user == null) {
+              final cachedUser = ref.read(userProfileProvider).value;
+              if (cachedUser != null) {
+                return _buildProfileContent(
+                  context,
+                  ref,
+                  cachedUser,
+                  theme,
+                  l10n,
+                );
+              }
+              return Center(child: Text(l10n.errorPrefix));
+            }
+            return _buildProfileContent(context, ref, user, theme, l10n);
+          },
+        ),
       ),
     );
   }
 
-  Widget _buildProfileContent(BuildContext context, WidgetRef ref, User user, ThemeData theme, dynamic l10n) {
+  Widget _buildProfileContent(
+    BuildContext context,
+    WidgetRef ref,
+    User user,
+    ThemeData theme,
+    dynamic l10n,
+  ) {
     return SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: SafeArea(
-            child: Column(
+      padding: const EdgeInsets.all(20),
+      child: SafeArea(
+        child: Column(
+          children: [
+            const SizedBox(height: 40),
+
+            CircleAvatar(
+              radius: 50,
+              backgroundImage: user.image.isNotEmpty
+                  ? CachedNetworkImageProvider(user.image)
+                  : const AssetImage(AppImages.profilePic) as ImageProvider,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              '${user.firstName} ${user.lastName}',
+              style: theme.textTheme.headlineSmall?.copyWith(
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Chip(
+              label: Text(user.role?.toUpperCase() ?? ''),
+              backgroundColor: theme.colorScheme.secondaryContainer,
+              labelStyle: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSecondaryContainer,
+              ),
+            ),
+
+            Text(
+              user.email,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.onSurfaceVariant,
+              ),
+            ),
+
+            const SizedBox(height: 30),
+
+            if (user.phone != '' || user.addressText != null)
+              SettingsGroup(
+                title: l10n.contactInfo,
+                children: [
+                  if (user.phone != '' && user.phone != null)
+                    SettingsTile(
+                      icon: Icons.phone_outlined,
+                      title: l10n.phoneNumber,
+                      subtitle: user.phone,
+                    ),
+                  if (user.addressText != null)
+                    SettingsTile(
+                      icon: Icons.location_on_outlined,
+                      title: l10n.address,
+                      subtitle: user.addressText,
+                    ),
+                ],
+              ),
+
+            if (user.role != null || user.companyTitle != null)
+              SettingsGroup(
+                title: l10n.careerDetails,
+                children: [
+                  if (user.role != null)
+                    SettingsTile(
+                      icon: Icons.work_outline,
+                      title: l10n.role,
+                      subtitle: user.role?.toUpperCase(),
+                    ),
+                  if (user.companyTitle != null)
+                    SettingsTile(
+                      icon: Icons.business_center_outlined,
+                      title: l10n.jobTitle,
+                      subtitle: l10n.jobDescription(
+                        '${user.companyTitle}',
+                        user.companyDept ?? '',
+                      ),
+                    ),
+                ],
+              ),
+
+            if (user.age != null || user.bloodGroup != null)
+              SettingsGroup(
+                title: l10n.physicalDetails,
+                children: [
+                  if (user.age != null)
+                    SettingsTile(
+                      icon: Icons.cake_outlined,
+                      title: l10n.age,
+                      trailing: Text(
+                        l10n.ageValue('${user.age}'),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  if (user.bloodGroup != null)
+                    SettingsTile(
+                      icon: Icons.bloodtype_outlined,
+                      title: l10n.bloodGroup,
+                      trailing: Text(
+                        user.bloodGroup?.toUpperCase() ?? '',
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  if (user.height != null)
+                    SettingsTile(
+                      icon: Icons.height,
+                      title: l10n.height,
+                      trailing: Text(
+                        l10n.heightValue('${user.height}'),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                  if (user.weight != null)
+                    SettingsTile(
+                      icon: Icons.monitor_weight_outlined,
+                      title: l10n.weight,
+                      trailing: Text(
+                        l10n.weightValue('${user.weight}'),
+                        style: theme.textTheme.bodyMedium,
+                      ),
+                    ),
+                ],
+              ),
+
+            SettingsGroup(
+              title: l10n.preference,
               children: [
-                const SizedBox(height: 40),
-
-                CircleAvatar(
-                  radius: 50,
-                  backgroundImage: user.image.isNotEmpty
-                      ? NetworkImage(user.image)
-                      : const AssetImage(AppImages.profilePic) as ImageProvider,
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  "${user.firstName} ${user.lastName}",
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                Chip(
-                  label: Text(user.role?.toUpperCase() ?? ""),
-                  backgroundColor: theme.colorScheme.secondaryContainer,
-                  labelStyle: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSecondaryContainer,
+                SettingsTile(
+                  icon: Icons.notifications_none,
+                  title: l10n.notifications,
+                  subtitle: l10n.deliveryUpdates,
+                  trailing: Switch(
+                    activeThumbColor: theme.colorScheme.primary,
+                    value: true,
+                    onChanged: (v) {},
                   ),
                 ),
 
-                Text(
-                  user.email,
-                  style: theme.textTheme.bodyMedium?.copyWith(
-                    color: theme.colorScheme.onSurfaceVariant,
+                SettingsTile(
+                  icon: Icons.dark_mode_outlined,
+                  title: l10n.darkMode,
+                  trailing: Switch(
+                    activeThumbColor: theme.colorScheme.primary,
+                    value:
+                        ref.watch(themeNotifierProvider).value ==
+                        ThemeMode.dark,
+                    onChanged: (value) =>
+                        ref.read(themeNotifierProvider.notifier).toggle(),
                   ),
                 ),
 
-                const SizedBox(height: 30),
-
-                if (user.phone != '' || user.addressText != null)
-                  SettingsGroup(
-                    title: l10n.contactInfo,
-                    children: [
-                      if (user.phone != '' && user.phone != null)
-                        SettingsTile(
-                          icon: Icons.phone_outlined,
-                          title: l10n.phoneNumber,
-                          subtitle: user.phone,
-                        ),
-                      if (user.addressText != null)
-                        SettingsTile(
-                          icon: Icons.location_on_outlined,
-                          title: l10n.address,
-                          subtitle: user.addressText,
-                        ),
-                    ],
-                  ),
-
-                if (user.role != null || user.companyTitle != null)
-                  SettingsGroup(
-                    title: l10n.careerDetails,
-                    children: [
-                      if (user.role != null)
-                        SettingsTile(
-                          icon: Icons.work_outline,
-                          title: l10n.role,
-                          subtitle: user.role?.toUpperCase(),
-                        ),
-                      if (user.companyTitle != null)
-                        SettingsTile(
-                          icon: Icons.business_center_outlined,
-                          title: l10n.jobTitle,
-                          subtitle: l10n.jobDescription(
-                              '${user.companyTitle}', user.companyDept ?? "" ),
-                        ),
-                    ],
-                  ),
-
-                if (user.age != null || user.bloodGroup != null)
-                  SettingsGroup(
-                    title: l10n.physicalDetails,
-                    children: [
-                      if (user.age != null)
-                        SettingsTile(
-                          icon: Icons.cake_outlined,
-                          title: l10n.age,
-                          trailing: Text(
-                            l10n.ageValue('${user.age}'),
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      if (user.bloodGroup != null)
-                        SettingsTile(
-                          icon: Icons.bloodtype_outlined,
-                          title: l10n.bloodGroup,
-                          trailing: Text(
-                            user.bloodGroup?.toUpperCase() ?? "",
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      if (user.height != null)
-                        SettingsTile(
-                          icon: Icons.height,
-                          title: l10n.height,
-                          trailing: Text(
-                            l10n.heightValue('${user.height}'),
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                      if (user.weight != null)
-                        SettingsTile(
-                          icon: Icons.monitor_weight_outlined,
-                          title: l10n.weight,
-                          trailing: Text(
-                            l10n.weightValue('${user.weight}'),
-                            style: theme.textTheme.bodyMedium,
-                          ),
-                        ),
-                    ],
-                  ),
-
-                SettingsGroup(
-                  title: l10n.preference,
-                  children: [
-                    SettingsTile(
-                      icon: Icons.notifications_none,
-                      title: l10n.notifications,
-                      subtitle: l10n.deliveryUpdates,
-                      trailing: Switch(
-                        activeThumbColor: theme.colorScheme.primary,
-                        value: true,
-                        onChanged: (v) {},
-                      ),
-                    ),
-
-                    SettingsTile(
-                      icon: Icons.dark_mode_outlined,
-                      title: l10n.darkMode,
-                      trailing: Switch(
-                        activeThumbColor: theme.colorScheme.primary,
-                        value:
-                            ref.watch(themeNotifierProvider).value == ThemeMode.dark,
-                        onChanged: (value) =>
-                            ref.read(themeNotifierProvider.notifier).toggle(),
-                      ),
-                    ),
-
-                    SettingsTile(
-                      icon: Icons.language,
-                      title: l10n.languages,
-                      onTap: () => _showLanguagePicker(context, ref),
-                    ),
-                  ],
-                ),
-
-                const SizedBox(height: 20),
-
-                TextButton.icon(
-                  onPressed: () => _showLogoutDialog(context, ref),
-                  icon: Icon(Icons.logout, color: theme.colorScheme.error),
-                  label: Text(
-                    l10n.logOut,
-                    style: TextStyle(color: theme.colorScheme.error),
-                  ),
-                  style: TextButton.styleFrom(
-                    minimumSize: const Size(double.infinity, 50),
-                    backgroundColor: theme.colorScheme.errorContainer
-                        .withValues(alpha: 0.2),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
-                    ),
-                  ),
+                SettingsTile(
+                  icon: Icons.language,
+                  title: l10n.languages,
+                  onTap: () => _showLanguagePicker(context, ref),
                 ),
               ],
             ),
-          ),
+
+            const SizedBox(height: 20),
+
+            TextButton.icon(
+              onPressed: () {
+                final isConnected = ref.read(connectivityNotifierProvider);
+                if (!isConnected) {
+                  NetworkErrorDialog.show(
+                    context,
+                    onRetry: () async {
+                      await ref
+                          .read(connectivityNotifierProvider.notifier)
+                          .refresh();
+                      if (!ref.context.mounted) return;
+
+                      if (ref.read(connectivityNotifierProvider)) {
+                        context.push(AppRoutes.cart);
+                      }
+                    },
+                  );
+                } else {
+                  _showLogoutDialog(context, ref);
+                }
+              },
+              icon: Icon(Icons.logout, color: theme.colorScheme.error),
+              label: Text(
+                l10n.logOut,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+              style: TextButton.styleFrom(
+                minimumSize: const Size(double.infinity, 50),
+                backgroundColor: theme.colorScheme.errorContainer.withValues(
+                  alpha: 0.2,
+                ),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(15),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -252,7 +322,7 @@ class ProfilePage extends ConsumerWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               Padding(
-                padding: EdgeInsets.all(16.0),
+                padding: const EdgeInsets.all(16.0),
                 child: Text(
                   l10n.selectLanguage,
                   style: GoogleFonts.poppins(
@@ -263,18 +333,18 @@ class ProfilePage extends ConsumerWidget {
               ),
 
               ListTile(
-                title: const Text("English"),
+                title: const Text('English'),
                 onTap: () => _updateLocale(ref, context, 'en'),
               ),
 
               Container(height: 1, color: AppColors.lightGray),
 
               ListTile(
-                title: const Text("العربية"),
+                title: const Text('العربية'),
                 onTap: () => _updateLocale(ref, context, 'ar'),
               ),
 
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ],
           ),
         );
@@ -293,7 +363,7 @@ void _showLogoutDialog(BuildContext context, WidgetRef ref) {
   final theme = context.colorScheme;
   final l10n = context.l10n;
 
-  showDialog(
+  DialogService.show(
     context: context,
     builder: (dialogContext) => AlertDialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),

@@ -7,12 +7,9 @@ part of 'connectivity_provider.dart';
 // **************************************************************************
 
 String _$connectivityNotifierHash() =>
-    r'25377c6f32026da5f02f9145b838d7b1392148fb';
+    r'59039b8cb2a52c94a1660fd817d02a0dd927f08e';
 
-/// Streams the current connectivity status.
-/// Emits `true` when online, `false` when offline.
-///
-/// Copied from [ConnectivityNotifier].
+/// See also [ConnectivityNotifier].
 @ProviderFor(ConnectivityNotifier)
 final connectivityNotifierProvider =
     NotifierProvider<ConnectivityNotifier, bool>.internal(

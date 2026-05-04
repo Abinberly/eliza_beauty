@@ -4,7 +4,7 @@ import 'database_helper.dart';
 
 part 'database_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 Future<Database> database(DatabaseRef ref) async {
   return await DatabaseHelper.instance.database;
 }

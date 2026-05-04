@@ -1,11 +1,11 @@
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
-import 'package:eliza_beauty/domain/use_case/onboarding_use_case.dart';
+import '../../../data/local/secure_storage_helper.dart';
+import '../../../domain/use_case/onboarding_use_case.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'onboarding_notifier.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class OnboardingNotifier extends _$OnboardingNotifier {
   @override
   int build() => 0; // Current Page Index

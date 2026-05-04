@@ -1,28 +1,31 @@
-import 'package:eliza_beauty/core/network/connectivity_provider.dart';
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/core/utils/alert_service.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/widgets/app_title.dart';
-import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
-import 'package:eliza_beauty/presentation/widgets/similar_product_card.dart';
-import 'package:eliza_beauty/presentation/widgets/product_header_section.dart';
-import 'package:eliza_beauty/presentation/widgets/product_image_gallery.dart';
-import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
-import 'package:eliza_beauty/presentation/widgets/product_extra_details.dart';
-import 'package:eliza_beauty/presentation/providers/shop/details_provider.dart';
-import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../core/network/connectivity_provider.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_images.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/utils/alert_service.dart';
+import '../../data/models/product_model.dart' as pm;
+import '../../data/models/wishlist_model.dart';
+import '../providers/wishlist/wishlist_provider.dart';
+import '../components/common/app_title.dart';
+import '../components/common/error_view.dart';
+import '../components/overlays/network_error_dialog.dart';
+import '../features/product/similar_product_card.dart';
+import '../features/product/product_header_section.dart';
+import '../features/product/product_image_gallery.dart';
+import '../components/common/rating_row.dart';
+import '../features/product/product_extra_details.dart';
+import '../providers/shop/details_provider.dart';
+import '../providers/cart/cart_provider.dart';
+import '../providers/auth/user_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ProductDetailsPage extends ConsumerWidget {
-  final int productId;
   const ProductDetailsPage({super.key, required this.productId});
+  final int productId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -30,6 +33,18 @@ class ProductDetailsPage extends ConsumerWidget {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
     final l10n = context.l10n;
+    final userAsync = ref.watch(userProfileProvider);
+
+    Future<void> refreshCart() async {
+      return ref.refresh(cartNotifierProvider.future);
+    }
+
+    // Connectivity changes Listening
+    ref.listen<bool>(connectivityNotifierProvider, (previous, isConnected) {
+      if (previous == false && isConnected == true) {
+        refreshCart();
+      }
+    });
 
     return Scaffold(
       appBar: AppBar(
@@ -63,84 +78,147 @@ class ProductDetailsPage extends ConsumerWidget {
             },
             icon: Image.asset(AppImages.bagIcon),
           ),
-          SizedBox(width: 20),
+          const SizedBox(width: 20),
         ],
       ),
 
-      body: productAsync.when(
-        data: (product) => SingleChildScrollView(
-          padding: const EdgeInsets.all(20),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ProductImageGallery(images: product.images),
+      body: RefreshIndicator(
+        onRefresh: refreshCart,
+        child: productAsync.when(
+          data: (product) {
+            final isWishlisted = ref.watch(isProductWishlistedProvider(product.id));
+            return SingleChildScrollView(
+            padding: const EdgeInsets.all(20),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Stack(
+                  children: [
 
-              const SizedBox(height: 24),
+                    ProductImageGallery(images: product.images),
+                
+                    Positioned(
+                      top: 16,
+                      right: 0,
+                      child: IconButton(
+                        icon: Icon(
+                          isWishlisted ? Icons.favorite : Icons.favorite_border,
+                          size: 30,
+                          color: isWishlisted 
+                              ? Colors.red 
+                              : AppColors.error.withValues(alpha: 0.8),
+                        ),
+                        onPressed: () async {
+                          if (userAsync.value == null) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(l10n.loginToAddToWishlist),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                            return;
+                          }
+                      
+                          await ref
+                              .read(wishlistNotifierProvider.notifier)
+                              .toggleItem(product.toProductInfo());
+                      
+                          if (context.mounted) {
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              SnackBar(
+                                content: Text(
+                                  isWishlisted
+                                      ? l10n.removedFromWishlist(product.title)
+                                      : '${product.title} ${l10n.addedToWishlist}',
+                                ),
+                                duration: const Duration(seconds: 2),
+                              ),
+                            );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                ),
 
-              ProductHeaderSection(
-                title: product.title,
-                price: product.price,
-                discount: product.discountPercentage,
-              ),
+                const SizedBox(height: 24),
 
-              const SizedBox(height: 4),
+                ProductHeaderSection(
+                  title: product.title,
+                  price: product.price,
+                  discount: product.discountPercentage,
+                ),
 
-              RatingRow(rating: product.rating, count: product.reviewCount),
+                const SizedBox(height: 4),
 
-              const SizedBox(height: 20),
-              Text(
-                product.description,
-                style: GoogleFonts.poppins(color: Colors.grey, height: 1.5),
-                textAlign: .start,
-              ),
+                RatingRow(rating: product.rating, count: product.reviewCount),
 
-              const SizedBox(height: 30),
+                const SizedBox(height: 20),
+                Text(
+                  product.description,
+                  style: GoogleFonts.poppins(color: Colors.grey, height: 1.5),
+                  textAlign: .start,
+                ),
 
-              _buildBottomAction(context, ref, productAsync),
+                const SizedBox(height: 30),
 
-              const SizedBox(height: 12),
+                _buildBottomAction(context, ref, productAsync),
 
-              OutlinedButton(
-                onPressed: () {},
-                style: OutlinedButton.styleFrom(
-                  minimumSize: const Size(double.infinity, 60),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                const SizedBox(height: 12),
+
+                OutlinedButton(
+                  onPressed: () {},
+                  style: OutlinedButton.styleFrom(
+                    minimumSize: const Size(double.infinity, 60),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                  ),
+                  child: Text(
+                    l10n.buyNow,
+                    style: GoogleFonts.inter(
+                      color: colorScheme.onSurface,
+                      fontSize: 16,
+                      fontWeight: .w600,
+                    ),
                   ),
                 ),
-                child: Text(
-                  l10n.buyNow,
-                  style: GoogleFonts.inter(
-                    color: colorScheme.onSurface,
-                    fontSize: 16,
-                    fontWeight: .w600,
+
+                const SizedBox(height: 20),
+
+                ProductExtraDetails(product: product),
+
+                const SizedBox(height: 20),
+                Text(
+                  l10n.customerExperience,
+                  style: GoogleFonts.poppins(
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-              ),
 
-              const SizedBox(height: 20),
+                _buildReviewList(product.reviews),
 
-              ProductExtraDetails(product: product),
+                const SizedBox(height: 16),
 
-              const SizedBox(height: 20),
-              Text(
-                l10n.customerExperience,
-                style: GoogleFonts.poppins(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
+                _buildSimilarProducts(
+                  context,
+                  ref,
+                  product.category,
+                  product.id,
                 ),
-              ),
-
-              _buildReviewList(product.reviews),
-
-              const SizedBox(height: 16),
-
-              _buildSimilarProducts(context, ref, product.category, product.id),
-            ],
+              ],
+            ),
+            );
+          },
+          loading: () => const Center(child: CircularProgressIndicator()),
+          error: (error, _) => ErrorView(
+            message: error.toString().contains('timed out')
+                ? context.l10n.connectionTimeout
+                : context.l10n.somethingWentWrong,
+            onRetry: refreshCart,
           ),
         ),
-        loading: () => const Center(child: CircularProgressIndicator()),
-        error: (e, _) => Center(child: Text('${l10n.errorPrefix}$e')),
       ),
     );
   }
@@ -148,7 +226,7 @@ class ProductDetailsPage extends ConsumerWidget {
   Widget _buildBottomAction(
     BuildContext context,
     WidgetRef ref,
-    AsyncValue<ProductModel> productAsync,
+    AsyncValue<pm.ProductModel> productAsync,
   ) {
     final cartState = ref.watch(cartNotifierProvider);
     final userAsync = ref.watch(userProfileProvider);
@@ -161,7 +239,7 @@ class ProductDetailsPage extends ConsumerWidget {
                 ScaffoldMessenger.of(context).showSnackBar(
                   SnackBar(
                     content: Text(context.l10n.loginToAddToCart),
-                    duration: Duration(seconds: 2),
+                    duration: const Duration(seconds: 2),
                   ),
                 );
                 return;
@@ -205,7 +283,7 @@ class ProductDetailsPage extends ConsumerWidget {
     );
   }
 
-  Widget _buildReviewList(List<Review> reviews) {
+  Widget _buildReviewList(List<pm.Review> reviews) {
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),

@@ -1,15 +1,15 @@
 import 'package:chopper/chopper.dart';
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
-import 'package:eliza_beauty/core/constants/api_endpoints.dart';
-import 'package:eliza_beauty/data/sources/auth_api_service.dart';
-import 'package:eliza_beauty/data/sources/cart_api_service.dart';
-import 'package:eliza_beauty/data/sources/product_api_service.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../data/local/secure_storage_helper.dart';
+import '../../data/sources/auth_api_service.dart';
+import '../../data/sources/cart_api_service.dart';
+import '../../data/sources/product_api_service.dart';
+import '../constants/api_endpoints.dart';
 
 part 'chopper_client.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 ChopperClient refreshChopperClient(Ref ref) {
   return ChopperClient(
     baseUrl: Uri.parse(ApiEndpoints.baseUrl),
@@ -25,7 +25,11 @@ ChopperClient chopperClient(Ref ref) {
 
   return ChopperClient(
     baseUrl: Uri.parse(ApiEndpoints.baseUrl),
-    services: [AuthApiService.create(), ProductApiService.create(), CartApiService.create()],
+    services: [
+      AuthApiService.create(),
+      ProductApiService.create(),
+      CartApiService.create(),
+    ],
     converter: const JsonConverter(),
     interceptors: [HttpLoggingInterceptor(), AuthInterceptor(storage)],
 
@@ -34,9 +38,8 @@ ChopperClient chopperClient(Ref ref) {
 }
 
 class AuthInterceptor implements Interceptor {
-  final SecureStorageHelper storage;
-
   AuthInterceptor(this.storage);
+  final SecureStorageHelper storage;
 
   @override
   FutureOr<Response<BodyType>> intercept<BodyType>(
@@ -68,8 +71,8 @@ ProductApiService productApiService(Ref ref) {
 }
 
 class MyAuthenticator extends Authenticator {
-  final Ref ref;
   MyAuthenticator(this.ref);
+  final Ref ref;
 
   @override
   FutureOr<Request?> authenticate(
@@ -104,9 +107,7 @@ class MyAuthenticator extends Authenticator {
         );
 
         return applyHeader(request, 'Authorization', 'Bearer $newAccess');
-      } else {
-
-      }
+      } else {}
     } catch (e) {
       await storage.deleteTokens();
     }

@@ -1,18 +1,18 @@
 import 'dart:convert';
 import 'dart:developer';
 import 'dart:io';
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/network/chopper_client.dart';
-import 'package:eliza_beauty/data/models/user_model.dart';
-import 'package:eliza_beauty/data/sources/auth_api_service.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../../data/local/secure_storage_helper.dart';
+import '../../../core/router/app_routes.dart';
+import '../../../core/network/chopper_client.dart';
+import '../../../data/models/user_model.dart';
+import '../../../data/sources/auth_api_service.dart';
+import '../auth/user_provider.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'splash_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SplashNotifier extends _$SplashNotifier {
   @override
   FutureOr<String?> build() async {

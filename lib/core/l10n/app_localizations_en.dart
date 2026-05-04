@@ -63,6 +63,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get home => 'Home';
 
   @override
+  String get wishlist => 'Wishlist';
+
+  @override
+  String get loginToAddToWishlist => 'Please login to add items to wishlist';
+
+  @override
+  String get addedToWishlist => 'added to wishlist';
+
+  @override
+  String get wishlistEmpty => 'Your wishlist is empty';
+
+  @override
+  String get wishlistEmptyDesc =>
+      'Start adding items you love to see them here';
+
+  @override
+  String get clearWishlist => 'Clear Wishlist';
+
+  @override
+  String get clearWishlistConfirm =>
+      'Are you sure you want to remove all items from your wishlist?';
+
+  @override
+  String get wishlistCleared => 'Wishlist cleared';
+
+  @override
+  String get searchWishlist => 'Search wishlist...';
+
+  @override
   String get search => 'Search';
 
   @override
@@ -419,4 +448,126 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get networkErrorDismiss => 'Dismiss';
+
+  @override
+  String get connectionTimeout => 'Connection timed out. Please try again.';
+
+  @override
+  String get somethingWentWrong => 'Something went wrong';
+
+  @override
+  String get errorNetworkNoConnection =>
+      'No internet connection. Please check your network settings.';
+
+  @override
+  String get errorNetworkTimeout => 'Connection timeout. Please try again.';
+
+  @override
+  String get errorNetworkGeneral =>
+      'Network error occurred. Please check your connection and try again.';
+
+  @override
+  String get errorServerUnavailable =>
+      'Server is temporarily unavailable. Please try again later.';
+
+  @override
+  String get errorAuthFailed => 'Authentication failed. Please log in again.';
+
+  @override
+  String get errorValidation =>
+      'Invalid data provided. Please check your input.';
+
+  @override
+  String get errorUnknown => 'An unexpected error occurred. Please try again.';
+
+  @override
+  String errorRetryAttempt(Object attempt, Object maxAttempts) {
+    return 'Retry attempt $attempt of $maxAttempts';
+  }
+
+  @override
+  String get errorRetryExhausted =>
+      'All retry attempts exhausted. Please try again later.';
+
+  @override
+  String get errorOfflineMode =>
+      'Working in offline mode. Some features may be limited.';
+
+  @override
+  String errorRetryIn(Object seconds) {
+    return 'Retrying in $seconds seconds...';
+  }
+
+  @override
+  String errorLastSync(Object time) {
+    return 'Last sync: $time';
+  }
+
+  @override
+  String get errorRecoveringConnection => 'Recovering connection...';
+
+  @override
+  String errorOperationFailed(Object message) {
+    return 'Operation failed. $message';
+  }
+
+  @override
+  String get errorDataCorrupted => 'Data may be corrupted. Please refresh.';
+
+  @override
+  String get errorCacheCleared => 'Cache cleared successfully.';
+
+  @override
+  String get errorRetryWithBackoff =>
+      'Automatic retry with exponential backoff enabled.';
+
+  @override
+  String get pleaseLoginToViewWishlist => 'Please login to view your wishlist';
+
+  @override
+  String get noItemsFoundWishlist => 'No items found';
+
+  @override
+  String errorPrefixWish(String error) {
+    return 'Error: $error';
+  }
+
+  @override
+  String get wishlistEmptyHeadline => 'Your wishlist is empty';
+
+  @override
+  String get wishlistEmptySubline =>
+      'Start adding items you love to see them here';
+
+  @override
+  String get clear => 'Clear';
+
+  @override
+  String get undo => 'Undo';
+
+  @override
+  String removedFromWishlist(String productName) {
+    return '$productName removed from wishlist';
+  }
+
+  @override
+  String addedDaysAgo(Object days) {
+    return 'Added ${days}d ago';
+  }
+
+  @override
+  String addedHoursAgo(Object hours) {
+    return 'Added ${hours}h ago';
+  }
+
+  @override
+  String addedMinutesAgo(Object minutes) {
+    return 'Added ${minutes}m ago';
+  }
+
+  @override
+  String get addedJustNow => 'Added Just now';
+
+  @override
+  String get removeTooltip => 'Remove from wishlist';
 }

@@ -1,7 +1,4 @@
 class CategoryModel {
-  final String slug;
-  final String name;
-  final String url;
 
   CategoryModel({
     required this.slug,
@@ -26,6 +23,9 @@ class CategoryModel {
       return CategoryModel(slug: 'unknown', name: 'Unknown', url: '');
     }
   }
+  final String slug;
+  final String name;
+  final String url;
 
   Map<String, dynamic> toJson() {
     return {

@@ -1,17 +1,17 @@
 import 'dart:async';
 import 'dart:convert';
 import 'dart:developer';
-import 'package:eliza_beauty/core/network/chopper_client.dart';
-import 'package:eliza_beauty/core/network/connectivity_provider.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/data/models/product_search_state.dart';
-import 'package:eliza_beauty/data/repositories/local_cache_repository.dart';
-import 'package:eliza_beauty/data/sources/product_api_service.dart';
+import '../../../core/network/chopper_client.dart';
+import '../../../core/network/connectivity_provider.dart';
+import '../../../data/models/product_model.dart';
+import '../../../data/models/product_search_state.dart';
+import '../../../data/repositories/local_cache_repository.dart';
+import '../../../data/sources/product_api_service.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'product_search_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ProductSearchController extends _$ProductSearchController {
   Timer? _debounceTimer;
 

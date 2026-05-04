@@ -1,9 +1,6 @@
 import 'package:flutter/material.dart';
 
 class AuthLayoutTemplate extends StatelessWidget {
-  final Widget header;
-  final Widget form;
-  final Widget? footer;
 
   const AuthLayoutTemplate({
     super.key,
@@ -11,6 +8,9 @@ class AuthLayoutTemplate extends StatelessWidget {
     required this.form,
     this.footer,
   });
+  final Widget header;
+  final Widget form;
+  final Widget? footer;
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class AuthLayoutTemplate extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(height: 100),
+              const SizedBox(height: 100),
               Container(
                 padding: const EdgeInsets.all(24.0),
                 decoration: BoxDecoration(
@@ -35,7 +35,7 @@ class AuthLayoutTemplate extends StatelessWidget {
                     BoxShadow(
                       color: theme.shadowColor.withValues(alpha: 0.05),
                       blurRadius: 20,
-                      offset: Offset(0, 10),
+                      offset: const Offset(0, 10),
                     ),
                   ],
                   border: Border.all(
@@ -52,7 +52,7 @@ class AuthLayoutTemplate extends StatelessWidget {
                     if (footer != null) ...[
                       const SizedBox(height: 20),
                       footer!,
-                      SizedBox(height: 20),
+                      const SizedBox(height: 20),
                     ],
                   ],
                 ),

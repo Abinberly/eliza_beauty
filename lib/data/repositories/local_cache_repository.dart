@@ -1,16 +1,16 @@
 import 'dart:convert';
-import 'package:eliza_beauty/data/local/database_helper.dart';
-import 'package:eliza_beauty/data/models/category_model.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
+import '../local/database_helper.dart';
+import '../models/category_model.dart';
+import '../models/product_model.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'local_cache_repository.g.dart';
 
 class LocalCacheRepository {
-  final DatabaseHelper _dbHelper;
 
   LocalCacheRepository(this._dbHelper);
+  final DatabaseHelper _dbHelper;
 
   // ── Categories ──────────────────────────────────────────
 
@@ -128,7 +128,7 @@ class LocalCacheRepository {
   }
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 LocalCacheRepository localCacheRepository(Ref ref) {
   return LocalCacheRepository(DatabaseHelper.instance);
 }

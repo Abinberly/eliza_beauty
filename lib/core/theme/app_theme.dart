@@ -1,11 +1,7 @@
-import 'package:eliza_beauty/core/l10n/app_localizations.dart';
+import '../l10n/app_localizations.dart';
 import 'package:flutter/material.dart';
 
 class AppCustomColors extends ThemeExtension<AppCustomColors> {
-  final Color success;
-  final Color error;
-  final Color border;
-  final Color capsuleBg;
 
   const AppCustomColors({
     required this.success,
@@ -13,6 +9,10 @@ class AppCustomColors extends ThemeExtension<AppCustomColors> {
     required this.border,
     required this.capsuleBg,
   });
+  final Color success;
+  final Color error;
+  final Color border;
+  final Color capsuleBg;
 
   @override
   AppCustomColors copyWith({

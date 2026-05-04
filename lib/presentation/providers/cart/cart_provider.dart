@@ -1,7 +1,7 @@
-import 'package:eliza_beauty/core/network/chopper_client.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/domain/entities/cart_item.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../../core/network/chopper_client.dart';
+import '../../../data/models/product_model.dart';
+import '../../../domain/entities/cart_item.dart';
+import '../auth/user_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'cart_provider.g.dart';
@@ -24,7 +24,7 @@ class CartNotifier extends _$CartNotifier {
       
       return cartsJson.map(_parseCart).toList();
     } else {
-      throw Exception("Failed to fetch carts");
+      throw Exception('Failed to fetch carts');
     }
   }
 

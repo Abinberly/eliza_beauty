@@ -1,7 +1,7 @@
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_images.dart';
-import 'package:eliza_beauty/presentation/providers/app/onboarding_notifier.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_images.dart';
+import '../providers/app/onboarding_notifier.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -556,8 +556,8 @@ class _OnboardingPageState extends ConsumerState<OnboardingPage> {
                             color: AppColors.textPrimary,
                             height: 1.15,
                           ),
-                          children: [
-                            const TextSpan(text: 'Join the\n'),
+                          children: const [
+                            TextSpan(text: 'Join the\n'),
                             TextSpan(
                               text: 'Inner Circle.',
                               style: TextStyle(color: AppColors.primary),

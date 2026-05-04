@@ -5,6 +5,9 @@ part 'product_model.g.dart';
 
 @freezed
 abstract class ProductModel with _$ProductModel {
+
+  factory ProductModel.fromJson(Map<String, dynamic> json) =>
+      _$ProductModelFromJson(json);
   const ProductModel._(); 
   
   const factory ProductModel({
@@ -32,9 +35,6 @@ abstract class ProductModel with _$ProductModel {
   }) = _ProductModel;
 
   int get reviewCount => reviews.length;
-
-  factory ProductModel.fromJson(Map<String, dynamic> json) =>
-      _$ProductModelFromJson(json);
 }
 
 @freezed

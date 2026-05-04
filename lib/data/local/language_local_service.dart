@@ -1,12 +1,12 @@
-import 'package:eliza_beauty/data/local/database_provider.dart';
+import 'database_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sqflite/sqflite.dart';
 
 part 'language_local_service.g.dart';
 
 class LanguageLocalService {
-  final Database _db;
   LanguageLocalService(this._db);
+  final Database _db;
 
   Future<void> updateLanguage(String code) async {
     await _db.insert('settings', {
@@ -25,7 +25,7 @@ class LanguageLocalService {
   }
 }
 
-@riverpod 
+@Riverpod(keepAlive: true) 
 Future<LanguageLocalService> languageLocalService(LanguageLocalServiceRef ref) async {
   final db = await ref.watch(databaseProvider.future); 
   return LanguageLocalService(db);

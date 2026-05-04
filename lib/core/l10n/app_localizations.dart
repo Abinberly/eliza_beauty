@@ -206,6 +206,60 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get home;
 
+  /// No description provided for @wishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishlist'**
+  String get wishlist;
+
+  /// No description provided for @loginToAddToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to add items to wishlist'**
+  String get loginToAddToWishlist;
+
+  /// No description provided for @addedToWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'added to wishlist'**
+  String get addedToWishlist;
+
+  /// No description provided for @wishlistEmpty.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wishlist is empty'**
+  String get wishlistEmpty;
+
+  /// No description provided for @wishlistEmptyDesc.
+  ///
+  /// In en, this message translates to:
+  /// **'Start adding items you love to see them here'**
+  String get wishlistEmptyDesc;
+
+  /// No description provided for @clearWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Wishlist'**
+  String get clearWishlist;
+
+  /// No description provided for @clearWishlistConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to remove all items from your wishlist?'**
+  String get clearWishlistConfirm;
+
+  /// No description provided for @wishlistCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Wishlist cleared'**
+  String get wishlistCleared;
+
+  /// No description provided for @searchWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Search wishlist...'**
+  String get searchWishlist;
+
   /// No description provided for @search.
   ///
   /// In en, this message translates to:
@@ -853,6 +907,198 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Dismiss'**
   String get networkErrorDismiss;
+
+  /// No description provided for @connectionTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timed out. Please try again.'**
+  String get connectionTimeout;
+
+  /// No description provided for @somethingWentWrong.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get somethingWentWrong;
+
+  /// No description provided for @errorNetworkNoConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'No internet connection. Please check your network settings.'**
+  String get errorNetworkNoConnection;
+
+  /// No description provided for @errorNetworkTimeout.
+  ///
+  /// In en, this message translates to:
+  /// **'Connection timeout. Please try again.'**
+  String get errorNetworkTimeout;
+
+  /// No description provided for @errorNetworkGeneral.
+  ///
+  /// In en, this message translates to:
+  /// **'Network error occurred. Please check your connection and try again.'**
+  String get errorNetworkGeneral;
+
+  /// No description provided for @errorServerUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Server is temporarily unavailable. Please try again later.'**
+  String get errorServerUnavailable;
+
+  /// No description provided for @errorAuthFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Authentication failed. Please log in again.'**
+  String get errorAuthFailed;
+
+  /// No description provided for @errorValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid data provided. Please check your input.'**
+  String get errorValidation;
+
+  /// No description provided for @errorUnknown.
+  ///
+  /// In en, this message translates to:
+  /// **'An unexpected error occurred. Please try again.'**
+  String get errorUnknown;
+
+  /// No description provided for @errorRetryAttempt.
+  ///
+  /// In en, this message translates to:
+  /// **'Retry attempt {attempt} of {maxAttempts}'**
+  String errorRetryAttempt(Object attempt, Object maxAttempts);
+
+  /// No description provided for @errorRetryExhausted.
+  ///
+  /// In en, this message translates to:
+  /// **'All retry attempts exhausted. Please try again later.'**
+  String get errorRetryExhausted;
+
+  /// No description provided for @errorOfflineMode.
+  ///
+  /// In en, this message translates to:
+  /// **'Working in offline mode. Some features may be limited.'**
+  String get errorOfflineMode;
+
+  /// No description provided for @errorRetryIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Retrying in {seconds} seconds...'**
+  String errorRetryIn(Object seconds);
+
+  /// No description provided for @errorLastSync.
+  ///
+  /// In en, this message translates to:
+  /// **'Last sync: {time}'**
+  String errorLastSync(Object time);
+
+  /// No description provided for @errorRecoveringConnection.
+  ///
+  /// In en, this message translates to:
+  /// **'Recovering connection...'**
+  String get errorRecoveringConnection;
+
+  /// No description provided for @errorOperationFailed.
+  ///
+  /// In en, this message translates to:
+  /// **'Operation failed. {message}'**
+  String errorOperationFailed(Object message);
+
+  /// No description provided for @errorDataCorrupted.
+  ///
+  /// In en, this message translates to:
+  /// **'Data may be corrupted. Please refresh.'**
+  String get errorDataCorrupted;
+
+  /// No description provided for @errorCacheCleared.
+  ///
+  /// In en, this message translates to:
+  /// **'Cache cleared successfully.'**
+  String get errorCacheCleared;
+
+  /// No description provided for @errorRetryWithBackoff.
+  ///
+  /// In en, this message translates to:
+  /// **'Automatic retry with exponential backoff enabled.'**
+  String get errorRetryWithBackoff;
+
+  /// No description provided for @pleaseLoginToViewWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'Please login to view your wishlist'**
+  String get pleaseLoginToViewWishlist;
+
+  /// No description provided for @noItemsFoundWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'No items found'**
+  String get noItemsFoundWishlist;
+
+  /// No description provided for @errorPrefixWish.
+  ///
+  /// In en, this message translates to:
+  /// **'Error: {error}'**
+  String errorPrefixWish(String error);
+
+  /// No description provided for @wishlistEmptyHeadline.
+  ///
+  /// In en, this message translates to:
+  /// **'Your wishlist is empty'**
+  String get wishlistEmptyHeadline;
+
+  /// No description provided for @wishlistEmptySubline.
+  ///
+  /// In en, this message translates to:
+  /// **'Start adding items you love to see them here'**
+  String get wishlistEmptySubline;
+
+  /// No description provided for @clear.
+  ///
+  /// In en, this message translates to:
+  /// **'Clear'**
+  String get clear;
+
+  /// No description provided for @undo.
+  ///
+  /// In en, this message translates to:
+  /// **'Undo'**
+  String get undo;
+
+  /// No description provided for @removedFromWishlist.
+  ///
+  /// In en, this message translates to:
+  /// **'{productName} removed from wishlist'**
+  String removedFromWishlist(String productName);
+
+  /// No description provided for @addedDaysAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {days}d ago'**
+  String addedDaysAgo(Object days);
+
+  /// No description provided for @addedHoursAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {hours}h ago'**
+  String addedHoursAgo(Object hours);
+
+  /// No description provided for @addedMinutesAgo.
+  ///
+  /// In en, this message translates to:
+  /// **'Added {minutes}m ago'**
+  String addedMinutesAgo(Object minutes);
+
+  /// No description provided for @addedJustNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Added Just now'**
+  String get addedJustNow;
+
+  /// No description provided for @removeTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from wishlist'**
+  String get removeTooltip;
 }
 
 class _AppLocalizationsDelegate

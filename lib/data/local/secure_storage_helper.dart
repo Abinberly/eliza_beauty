@@ -1,4 +1,4 @@
-import 'package:eliza_beauty/domain/repository/storage_repository.dart';
+import '../../domain/repository/storage_repository.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -11,6 +11,8 @@ FlutterSecureStorage secureStorage(Ref ref) {
 }
 
 class SecureStorageHelper implements StorageRepository {
+
+  SecureStorageHelper(this._storage);
   static const _accessTokenKey = 'access_token';
   static const _refreshTokenKey = 'refresh_token';
   static const _userAccountKey = 'user_account_json';
@@ -18,8 +20,6 @@ class SecureStorageHelper implements StorageRepository {
   static const _themeKey = 'app_theme';
 
   final FlutterSecureStorage _storage;
-
-  SecureStorageHelper(this._storage);
 
   // Access Token & Refresh Token
   Future<void> saveTokens({

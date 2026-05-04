@@ -1,15 +1,16 @@
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/presentation/main_layout/main_layout_screen.dart';
-import 'package:eliza_beauty/presentation/pages/cart_page.dart';
-import 'package:eliza_beauty/presentation/pages/profile_page.dart';
-import 'package:eliza_beauty/presentation/pages/forgot_password_page.dart';
-import 'package:eliza_beauty/presentation/pages/home_screen.dart';
-import 'package:eliza_beauty/presentation/pages/login_page.dart';
-import 'package:eliza_beauty/presentation/pages/onboarding_page.dart';
-import 'package:eliza_beauty/presentation/pages/product_details_page.dart';
-import 'package:eliza_beauty/presentation/pages/register_page.dart';
-import 'package:eliza_beauty/presentation/pages/search_product_page.dart';
-import 'package:eliza_beauty/presentation/pages/splash_screen.dart';
+import 'app_routes.dart';
+import '../../presentation/main_layout/main_layout_screen.dart';
+import '../../presentation/pages/cart_page.dart';
+import '../../presentation/pages/profile_page.dart';
+import '../../presentation/pages/forgot_password_page.dart';
+import '../../presentation/pages/home_screen.dart';
+import '../../presentation/pages/login_page.dart';
+import '../../presentation/pages/onboarding_page.dart';
+import '../../presentation/pages/product_details_page.dart';
+import '../../presentation/pages/register_page.dart';
+import '../../presentation/pages/search_product_page.dart';
+import '../../presentation/pages/splash_screen.dart';
+import '../../presentation/pages/wishlist_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -20,9 +21,10 @@ part 'app_router.g.dart';
 final _rootNavigatorKey = GlobalKey<NavigatorState>();
 final _homeNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'home');
 final _searchNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'search');
+final _wishlistNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'wishlist');
 final _accountNavigatorKey = GlobalKey<NavigatorState>(debugLabel: 'account');
 
-@riverpod
+@Riverpod(keepAlive: true)
 GoRouter router(Ref ref) {
   return GoRouter(
     navigatorKey: _rootNavigatorKey,
@@ -54,14 +56,14 @@ GoRouter router(Ref ref) {
         builder: (context, state) => const OnboardingPage(),
       ),
 
-      GoRoute(path: AppRoutes.cart, builder: (context, state) => CartPage()),
+      GoRoute(path: AppRoutes.cart, builder: (context, state) => const CartPage()),
 
       GoRoute(
         path: AppRoutes.prodDetails,
         name: AppRoutes.prodDetailsName,
         builder: (context, state) {
           final idString = state.pathParameters['id'];
-          if (idString == null) throw Exception("Product ID is missing");
+          if (idString == null) throw Exception('Product ID is missing');
           return ProductDetailsPage(productId: int.parse(idString));
         },
       ),
@@ -91,12 +93,12 @@ GoRouter router(Ref ref) {
             ],
           ),
 
-          // StatefulShellBranch(
-          //   navigatorKey: _saveNavigatorKey,
-          //   routes: [
-          //     GoRoute(path: AppRoutes.cart, builder: (context, state) => CartPage()),
-          //   ],
-          // ),
+          StatefulShellBranch(
+            navigatorKey: _wishlistNavigatorKey,
+            routes: [
+              GoRoute(path: AppRoutes.wishlist, builder: (context, state) => const WishlistPage()),
+            ],
+          ),
           StatefulShellBranch(
             navigatorKey: _accountNavigatorKey,
             routes: [

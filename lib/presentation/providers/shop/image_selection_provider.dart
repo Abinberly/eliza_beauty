@@ -2,7 +2,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'image_selection_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SelectedImageIndex extends _$SelectedImageIndex {
 
 @override

@@ -63,6 +63,36 @@ class AppLocalizationsAr extends AppLocalizations {
   String get home => 'الرئيسية';
 
   @override
+  String get wishlist => 'المفضلة';
+
+  @override
+  String get loginToAddToWishlist =>
+      'يرجى تسجيل الدخول لإضافة عناصر إلى المفضلة';
+
+  @override
+  String get addedToWishlist => 'أضيفت إلى المفضلة';
+
+  @override
+  String get wishlistEmpty => 'المفضلة فارغة';
+
+  @override
+  String get wishlistEmptyDesc =>
+      'ابدأ في إضافة العناصر التي تحبها لرؤيتها هنا';
+
+  @override
+  String get clearWishlist => 'مسح المفضلة';
+
+  @override
+  String get clearWishlistConfirm =>
+      'هل أنت متأكد من أنك تريد إزالة جميع العناصر من المفضلة؟';
+
+  @override
+  String get wishlistCleared => 'تم مسح المفضلة';
+
+  @override
+  String get searchWishlist => 'البحث في المفضلة...';
+
+  @override
   String get search => 'بحث';
 
   @override
@@ -422,4 +452,127 @@ class AppLocalizationsAr extends AppLocalizations {
 
   @override
   String get networkErrorDismiss => 'تجاهل';
+
+  @override
+  String get connectionTimeout => 'انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get somethingWentWrong => 'حدث خطأ ما';
+
+  @override
+  String get errorNetworkNoConnection =>
+      'لا يوجد اتصال بالإنترنت. يرجى التحقق من إعدادات الشبكة.';
+
+  @override
+  String get errorNetworkTimeout =>
+      'انتهت مهلة الاتصال. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String get errorNetworkGeneral =>
+      'حدث خطأ في الشبكة. يرجى التحقق من اتصالك والمحاولة مرة أخرى.';
+
+  @override
+  String get errorServerUnavailable =>
+      'الخادم غير متاح مؤقتاً. يرجى المحاولة مرة أخرى لاحقاً.';
+
+  @override
+  String get errorAuthFailed => 'فشل المصادقة. يرجى تسجيل الدخول مرة أخرى.';
+
+  @override
+  String get errorValidation => 'بيانات غير صالحة. يرجى التحقق من الإدخال.';
+
+  @override
+  String get errorUnknown => 'حدث خطأ غير متوقع. يرجى المحاولة مرة أخرى.';
+
+  @override
+  String errorRetryAttempt(Object attempt, Object maxAttempts) {
+    return 'محاولة إعادة $attempt من $maxAttempts';
+  }
+
+  @override
+  String get errorRetryExhausted =>
+      'تم استنفاد جميع محاولات إعادة المحاولة. يرجى المحاولة مرة أخرى لاحقاً.';
+
+  @override
+  String get errorOfflineMode =>
+      'العمل في وضع عدم الاتصال. قد تكون بعض الميزات محدودة.';
+
+  @override
+  String errorRetryIn(Object seconds) {
+    return 'إعادة المحاولة في $seconds ثوانٍ...';
+  }
+
+  @override
+  String errorLastSync(Object time) {
+    return 'آخر مزامنة: $time';
+  }
+
+  @override
+  String get errorRecoveringConnection => 'استعادة الاتصال...';
+
+  @override
+  String errorOperationFailed(Object message) {
+    return 'فشلت العملية. $message';
+  }
+
+  @override
+  String get errorDataCorrupted => 'قد تكون البيانات تالفة. يرجى التحديث.';
+
+  @override
+  String get errorCacheCleared => 'تم مسح ذاكرة التخزين المؤقت بنجاح.';
+
+  @override
+  String get errorRetryWithBackoff =>
+      'تم تمكين إعادة المحاولة التلقائية مع التراجع الأسي.';
+
+  @override
+  String get pleaseLoginToViewWishlist =>
+      'يرجى تسجيل الدخول لعرض قائمة الأمنيات الخاصة بك';
+
+  @override
+  String get noItemsFoundWishlist => 'لم يتم العثور على عناصر';
+
+  @override
+  String errorPrefixWish(String error) {
+    return 'خطأ: $error';
+  }
+
+  @override
+  String get wishlistEmptyHeadline => 'قائمة الأمنيات فارغة';
+
+  @override
+  String get wishlistEmptySubline =>
+      'ابدأ بإضافة العناصر التي تحبها لرؤيتها هنا';
+
+  @override
+  String get clear => 'مسح';
+
+  @override
+  String get undo => 'تراجع';
+
+  @override
+  String removedFromWishlist(String productName) {
+    return 'تمت إزالة $productName من قائمة الأمنيات';
+  }
+
+  @override
+  String addedDaysAgo(Object days) {
+    return 'تمت الإضافة منذ $days يوم';
+  }
+
+  @override
+  String addedHoursAgo(Object hours) {
+    return 'تمت الإضافة منذ $hours ساعة';
+  }
+
+  @override
+  String addedMinutesAgo(Object minutes) {
+    return 'تمت الإضافة منذ $minutes دقيقة';
+  }
+
+  @override
+  String get addedJustNow => 'أضيف الآن';
+
+  @override
+  String get removeTooltip => 'إزالة من قائمة الأمنيات';
 }

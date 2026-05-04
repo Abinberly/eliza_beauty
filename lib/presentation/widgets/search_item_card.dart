@@ -1,22 +1,25 @@
-import 'package:eliza_beauty/core/router/app_routes.dart';
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/core/utils/alert_service.dart';
-import 'package:eliza_beauty/core/network/connectivity_provider.dart';
-import 'package:eliza_beauty/data/models/product_model.dart';
-import 'package:eliza_beauty/presentation/widgets/app_network_image.dart';
-import 'package:eliza_beauty/presentation/widgets/rating_row.dart';
-import 'package:eliza_beauty/presentation/widgets/network_error_dialog.dart';
-import 'package:eliza_beauty/presentation/providers/cart/cart_provider.dart';
-import 'package:eliza_beauty/presentation/providers/auth/user_provider.dart';
+import '../../core/router/app_routes.dart';
+import '../../core/theme/app_colors.dart';
+import '../../core/theme/app_theme.dart';
+import '../../core/utils/alert_service.dart';
+import '../../core/network/connectivity_provider.dart';
+import '../../data/models/product_model.dart';
+import '../components/common/rating_row.dart';
+import '../components/media/app_network_image.dart';
+import '../components/overlays/network_error_dialog.dart';
+import '../features/product/product_card.dart';
+import '../providers/cart/cart_provider.dart';
+import '../providers/auth/user_provider.dart';
+import '../providers/wishlist/wishlist_provider.dart';
+import '../../data/models/wishlist_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class SearchItemCard extends ConsumerWidget {
-  final ProductModel product;
   const SearchItemCard({super.key, required this.product});
+  final ProductModel product;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -26,9 +29,9 @@ class SearchItemCard extends ConsumerWidget {
 
     final cartState = ref.watch(cartNotifierProvider);
     final userAsync = ref.watch(userProfileProvider);
+    final isWishlisted = ref.watch(isProductWishlistedProvider(product.id));
 
-    final double offPrice =
-        product.price - (product.price * (product.discountPercentage / 100));
+    final double offPrice = ProductCard.calculateDiscountedPrice(product.price, product.discountPercentage);
 
     return GestureDetector(
       onTap: () {
@@ -87,11 +90,40 @@ class SearchItemCard extends ConsumerWidget {
                         radius: 18,
                         child: IconButton(
                           icon: Icon(
-                            Icons.favorite_border,
+                            isWishlisted ? Icons.favorite : Icons.favorite_border,
                             size: 20,
-                            color: AppColors.error.withValues(alpha: 0.8),
+                            color: isWishlisted 
+                                ? Colors.red 
+                                : AppColors.error.withValues(alpha: 0.8),
                           ),
-                          onPressed: () {},
+                          onPressed: () async {
+                            if (userAsync.value == null) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(l10n.loginToAddToWishlist),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                              return;
+                            }
+
+                            await ref
+                                .read(wishlistNotifierProvider.notifier)
+                                .toggleItem(product.toProductInfo());
+
+                            if (context.mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                    isWishlisted
+                                        ? l10n.removedFromWishlist(product.title)
+                                        : '${product.title} ${l10n.addedToWishlist}',
+                                  ),
+                                  duration: const Duration(seconds: 2),
+                                ),
+                              );
+                            }
+                          },
                         ),
                       ),
                     ),
@@ -109,7 +141,7 @@ class SearchItemCard extends ConsumerWidget {
                             borderRadius: BorderRadius.circular(4),
                           ),
                           child: Text(
-                            "${product.discountPercentage.round()}% OFF",
+                            '${product.discountPercentage.round()}% OFF',
                             style: GoogleFonts.poppins(
                               color: Colors.white,
                               fontSize: 10,
@@ -142,7 +174,7 @@ class SearchItemCard extends ConsumerWidget {
                     crossAxisAlignment: WrapCrossAlignment.center,
                     children: [
                       Text(
-                        "\$${offPrice.toStringAsFixed(2)}",
+                        '\$${ProductCard.safeDoubleToString(offPrice)}',
                         style: theme.textTheme.titleMedium?.copyWith(
                           fontWeight: FontWeight.bold,
                           color: colorScheme.onSurface,
@@ -150,7 +182,7 @@ class SearchItemCard extends ConsumerWidget {
                       ),
                       const SizedBox(width: 8),
                       Text(
-                        "\$${product.price.toStringAsFixed(2)}",
+                        '\$${ProductCard.safeDoubleToString(product.price)}',
                         style: theme.textTheme.bodySmall?.copyWith(
                           decoration: TextDecoration.lineThrough,
                           color: theme.hintColor,
@@ -170,7 +202,7 @@ class SearchItemCard extends ConsumerWidget {
             ),
 
             Container(
-              padding: EdgeInsets.symmetric(horizontal: 12),
+              padding: const EdgeInsets.symmetric(horizontal: 12),
               width: double.infinity,
               height: 36,
               child: FilledButton(
@@ -185,7 +217,7 @@ class SearchItemCard extends ConsumerWidget {
                           ScaffoldMessenger.of(context).showSnackBar(
                             SnackBar(
                               content: Text(l10n.loginToAddToCart),
-                              duration: Duration(seconds: 2),
+                              duration: const Duration(seconds: 2),
                             ),
                           );
                           return;

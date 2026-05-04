@@ -1,7 +1,6 @@
 import 'dart:developer';
-
-import 'package:eliza_beauty/domain/entities/user.dart';
-import 'package:eliza_beauty/data/repositories/auth_repository_impl.dart';
+import '../../../domain/entities/user.dart';
+import '../../../data/repositories/auth_repository_impl.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -23,7 +22,7 @@ class UserProfile extends _$UserProfile {
 
 /// Fetches live user profile from API.
 /// Falls back to cached userProfile on failure (offline).
-@riverpod
+@Riverpod(keepAlive: true)
 Future<User?> liveUserProfile(Ref ref) async {
   try {
     final repository = ref.watch(authRepositoryProvider);

@@ -1,8 +1,8 @@
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/widgets/auth_navigation_link.dart';
-import 'package:eliza_beauty/presentation/widgets/auth_header_molecule.dart';
-import 'package:eliza_beauty/presentation/widgets/register_form_molecule.dart';
-import 'package:eliza_beauty/presentation/templates/auth_layout_template.dart';
+import '../../core/theme/app_theme.dart';
+import '../features/auth/auth_navigation_link.dart';
+import '../features/auth/auth_header_molecule.dart';
+import '../features/auth/register_form_molecule.dart';
+import '../templates/auth_layout_template.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -12,8 +12,6 @@ class RegisterPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final registerState = ref.watch(registerControllerProvider);
-
     final l10n = context.l10n;
 
     return Stack(
@@ -30,7 +28,6 @@ class RegisterPage extends ConsumerWidget {
             onActionPressed: () => context.pop(),
           ),
         ),
-        // if (registerState.isLoading) const AppOverlayLoader(),
       ],
     );
   }

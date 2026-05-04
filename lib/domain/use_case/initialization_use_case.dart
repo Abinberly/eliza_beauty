@@ -1,10 +1,10 @@
-import 'package:eliza_beauty/domain/repository/storage_repository.dart';
-import 'package:eliza_beauty/core/router/app_routes.dart';
+import '../repository/storage_repository.dart';
+import '../../core/router/app_routes.dart';
 
 class InitializationUseCase {
-  final StorageRepository _storage;
 
   InitializationUseCase(this._storage);
+  final StorageRepository _storage;
 
   Future<String> call() async {
     try {

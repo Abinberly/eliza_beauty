@@ -1,9 +1,9 @@
-import 'package:eliza_beauty/domain/repository/storage_repository.dart';
+import '../repository/storage_repository.dart';
 
 class CompleteOnboardingUseCase {
-  final StorageRepository _storage;
 
   CompleteOnboardingUseCase(this._storage);
+  final StorageRepository _storage;
 
   Future<void> call() async {
     await _storage.saveOnboardingStatus(isComplete: true);

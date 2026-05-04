@@ -1,8 +1,8 @@
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/presentation/widgets/auth_navigation_link.dart';
-import 'package:eliza_beauty/presentation/widgets/auth_header_molecule.dart';
-import 'package:eliza_beauty/presentation/widgets/forgot_password_form_molecule.dart';
-import 'package:eliza_beauty/presentation/templates/auth_layout_template.dart';
+import '../../core/theme/app_theme.dart';
+import '../features/auth/auth_navigation_link.dart';
+import '../features/auth/auth_header_molecule.dart';
+import '../features/auth/forgot_password_form_molecule.dart';
+import '../templates/auth_layout_template.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 

@@ -1,10 +1,10 @@
-import 'package:eliza_beauty/data/local/language_local_service.dart';
+import '../../../data/local/language_local_service.dart';
 import 'package:flutter/material.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'locale_provider.g.dart';
 
-@riverpod
+@Riverpod(keepAlive: true)
 class AppLocale extends _$AppLocale {
   @override
   Future<Locale> build() async {

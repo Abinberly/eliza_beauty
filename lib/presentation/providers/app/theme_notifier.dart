@@ -1,11 +1,10 @@
 import 'dart:async';
-
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_text_styles.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
-import 'package:eliza_beauty/data/local/secure_storage_helper.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/app_text_styles.dart';
+import '../../../core/theme/app_theme.dart';
+import '../../../data/local/secure_storage_helper.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ThemeNotifier extends AsyncNotifier<ThemeMode> {
 
@@ -54,8 +53,8 @@ final themeDataProvider = Provider<ThemeData>((ref) {
         bodyColor: AppColors.textPrimaryDark,
         displayColor: AppColors.textPrimaryDark,
       ),
-      extensions: [
-        const AppCustomColors(
+      extensions: const [
+        AppCustomColors(
           success: AppColors.success,
           error: AppColors.error,
           border: AppColors.border,
@@ -80,8 +79,8 @@ final themeDataProvider = Provider<ThemeData>((ref) {
       bodyColor: AppColors.textPrimary,
       displayColor: AppColors.textPrimary,
     ),
-    extensions: [
-      const AppCustomColors(
+    extensions: const [
+      AppCustomColors(
         success: AppColors.success,
         error: AppColors.error,
         border: AppColors.border,

@@ -6,7 +6,7 @@ part of 'shop_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$categoriesHash() => r'b519738265401744e8ae0c1f146384c39fdb5689';
+String _$categoriesHash() => r'5885814641d207dd5847647a397d818283e79e73';
 
 /// See also [categories].
 @ProviderFor(categories)
@@ -24,7 +24,7 @@ final categoriesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CategoriesRef = AutoDisposeFutureProviderRef<List<CategoryModel>>;
-String _$selectedCategoryHash() => r'd10f526465c43061d441e6c4cd6b09c746b97615';
+String _$selectedCategoryHash() => r'43808a9fcd44dfd967b3f24fe2149ecffc708547';
 
 /// See also [SelectedCategory].
 @ProviderFor(SelectedCategory)

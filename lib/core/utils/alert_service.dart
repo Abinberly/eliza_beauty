@@ -1,11 +1,12 @@
-import 'package:eliza_beauty/core/theme/app_colors.dart';
-import 'package:eliza_beauty/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import '../theme/app_colors.dart';
+import '../theme/app_theme.dart';
+import 'dialog_service.dart';
 
 class AlertService {
   static void showSuccess(BuildContext context, String message) {
-    showDialog(
+    DialogService.show(
       context: context,
       barrierDismissible: true,
       builder: (context) => Dialog(
@@ -54,20 +55,20 @@ class AlertService {
                   onPressed: () => context.pop(),
                   child: Text(
                     context.l10n.continueShopping,
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimaryDark),
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: AppColors.textPrimaryDark),
                   ),
                 ),
               ),
             ],
           ),
-        ),
+        ), 
       ),
     );
   }
 
   /// Shows a "No Internet Connection" popup dialog.
   static void showNoInternetDialog(BuildContext context) {
-    showDialog(
+    DialogService.show(
       context: context,
       barrierDismissible: true,
       builder: (context) => Dialog(
@@ -90,10 +91,10 @@ class AlertService {
                 ),
               ),
               const SizedBox(height: 20),
-              const Text(
-                'No Internet Connection',
+               Text(
+                context.l10n.networkErrorTitle,
                 textAlign: TextAlign.center,
-                style: TextStyle(
+                style: const TextStyle(
                   fontSize: 18,
                   fontWeight: FontWeight.w700,
                   letterSpacing: 0.3,
@@ -101,7 +102,7 @@ class AlertService {
               ),
               const SizedBox(height: 8),
               Text(
-                'Please check your connection and try again.\nCached data will be shown where available.',
+                context.l10n.networkErrorMessage,
                 textAlign: TextAlign.center,
                 style: TextStyle(
                   fontSize: 14,
@@ -121,9 +122,9 @@ class AlertService {
                     ),
                   ),
                   onPressed: () => Navigator.of(context).pop(),
-                  child: const Text(
-                    'OK',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
+                  child: Text(
+                    context.l10n.networkErrorRetry,
+                    style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: Colors.white),
                   ),
                 ),
               ),
